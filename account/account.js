@@ -5,19 +5,23 @@ const Ed25519 = require('./crypto/ed25519');
 const Secp256k1 = require('./crypto/secp256k1');
 const base58 = require('bs58');
 
+Buffer.prototype.toByteArray = function() {
+    return Array.prototype.slice.call(this, 0);
+};
+
 class Account
 {
-    constructor(priKey, algType)
+    constructor(priKeyBytes, algType)
     {
         this._algType = algType;
-        this._priKey = priKey;
+        this._priKeyBytes = priKeyBytes;
 
         if (this._algType === Algorithm.Ed25519) {
-            this._pubKey = Ed25519.getPubKey(this._priKey);
-            this._address = Ed25519.getAddress(this._pubKey);
+            this._pubKeyBytes = Ed25519.getPubKey(this._priKeyBytes);
+            this._address = Ed25519.getAddress(this._pubKeyBytes);
         } else if (this._algType === Algorithm.Secp256k1) {
-            this._pubKey = Secp256k1.getPubKey(this._priKey);
-            this._address = Secp256k1.getAddress(this._pubKey);
+            this._pubKeyBytes = Secp256k1.getPubKey(this._priKeyBytes);
+            this._address = Secp256k1.getAddress(this._pubKeyBytes);
         }
     }
 
@@ -34,14 +38,20 @@ class Account
         throw ('invalid account type');
     }
 
+    static loadFromPriKey(priKey, algType = Algorithm.Ed25519)
+    {
+        const priKeyBytes = base58.decode(priKey).toByteArray();
+        return new Account(priKeyBytes, algType)
+    }
+
     getPriKey()
     {
-        return base58.encode(this._priKey);
+        return base58.encode(this._priKeyBytes);
     }
 
     getPubKey()
     {
-        return base58.encode(this._pubKey);
+        return base58.encode(this._pubKeyBytes);
     }
 
     getAddress()
@@ -54,3 +64,8 @@ const account = Account.newAccount();
 console.log(account.getPriKey());
 console.log(account.getPubKey());
 console.log(account.getAddress());
+
+const accountLoad = Account.loadFromPriKey('2QwJRQTvf4RFcUQbEkUj8TUWctcM2MF1muKhBbDCnB3cdVF8jZsQauZdbNepQn3cbnjPftK6Va5nDSqFdpct3s7n');
+console.log(accountLoad.getPriKey());
+console.log(accountLoad.getPubKey());
+console.log(accountLoad.getAddress());
