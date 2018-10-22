@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "bs58": "^4.0.1",
+    "elliptic": "^6.4.1"
+  }
+}
