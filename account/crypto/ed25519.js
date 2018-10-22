@@ -59,8 +59,10 @@ class Ed25519
     }
 }
 
-const priKey = Ed25519.generatePriKey();
-const pubKey = Ed25519.getPubKey((priKey));
-console.log(base58.encode(priKey));
-console.log(base58.encode(pubKey));
-console.log(Ed25519.getAddress(pubKey));
+// const priKey = Ed25519.generatePriKey();
+// const pubKey = Ed25519.getPubKey((priKey));
+// console.log(base58.encode(priKey));
+// console.log(base58.encode(pubKey));
+// console.log(Ed25519.getAddress(pubKey));
+
+module.exports = Ed25519;

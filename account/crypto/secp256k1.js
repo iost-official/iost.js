@@ -51,8 +51,10 @@ class Secp256k1
     }
 }
 
-const priKey = Secp256k1.generatePriKey();
-const pubKey = Secp256k1.getPubKey(priKey);
-console.log(base58.encode(priKey));
-console.log(base58.encode(pubKey));
-console.log(Secp256k1.getAddress(pubKey));
+// const priKey = Secp256k1.generatePriKey();
+// const pubKey = Secp256k1.getPubKey(priKey);
+// console.log(base58.encode(priKey));
+// console.log(base58.encode(pubKey));
+// console.log(Secp256k1.getAddress(pubKey));
+
+module.exports = Secp256k1;
