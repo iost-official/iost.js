@@ -1,18 +1,16 @@
 'use strict';
 
-const Algorithm = require('./crypto/algorithm');
-const Ed25519 = require('./crypto/ed25519');
-const Secp256k1 = require('./crypto/secp256k1');
+const Algorithm = require('../lib/crypto/algorithm');
+const Ed25519 = require('../lib/crypto/ed25519');
+const Secp256k1 = require('../lib/crypto/secp256k1');
 const base58 = require('bs58');
 
-Buffer.prototype.toByteArray = function() {
+Buffer.prototype.toByteArray = function () {
     return Array.prototype.slice.call(this, 0);
 };
 
-class Account
-{
-    constructor(priKeyBytes, algType)
-    {
+class Account {
+    constructor(priKeyBytes, algType) {
         this._algType = algType;
         this._priKeyBytes = priKeyBytes;
 
@@ -25,8 +23,7 @@ class Account
         }
     }
 
-    static newAccount(algType = Algorithm.Ed25519)
-    {
+    static newKeyPair(algType = Algorithm.Ed25519) {
         if (algType === Algorithm.Ed25519) {
             const priKey = Ed25519.generatePriKey();
             return new Account(priKey, algType);
@@ -38,24 +35,20 @@ class Account
         throw ('invalid account type');
     }
 
-    static loadFromPriKey(priKey, algType = Algorithm.Ed25519)
-    {
+    static loadFromPriKey(priKey, algType = Algorithm.Ed25519) {
         const priKeyBytes = base58.decode(priKey).toByteArray();
         return new Account(priKeyBytes, algType)
     }
 
-    getPriKey()
-    {
+    getPriKey() {
         return base58.encode(this._priKeyBytes);
     }
 
-    getPubKey()
-    {
+    getPubKey() {
         return base58.encode(this._pubKeyBytes);
     }
 
-    getAddress()
-    {
+    getAddress() {
         return this._address;
     }
 }

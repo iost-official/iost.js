@@ -1,14 +1,22 @@
 'use strict';
 
-const {Account, IOST, HTTPProvider} = require('../index');
+const {Account, RPC, HTTPProvider} = require('../index');
 
-const iost = new IOST(new HTTPProvider('http://54.95.136.154:30001'));
+const {Tx} = require('../lib/structs');
 
-// net
-// iost.net.getNetInfo().then(console.log);
+const rpc = new RPC(new HTTPProvider('http://54.95.136.154:30001'));
 
-// chainInfo
-// iost.blockchain.getChainInfo().then(console.log);
+// //net
+rpc.net.getNetInfo().then(console.log);
 
-// getBlockByNum
-// iost.blockchain.getBlockByNum(1234, 1).then(console.log);
+// // chainInfo
+// rpc.blockchain.getChainInfo().then(console.log);
+//
+// // getBlockByNum
+// rpc.blockchain.getBlockByNum(1234, 1).then(console.log);
+
+// let tx = new Tx(1, 100000, 0);
+//
+// tx.addAction("iost.");
+//
+// rpc.transaction.sendTx();

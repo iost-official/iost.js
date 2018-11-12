@@ -1,11 +1,11 @@
 'use strict';
 
-const Account = require('./lib/account');
-const IOST = require('./lib/iost');
+const Account = require('./iost/account');
+const RPC = require('./lib/rpc');
 const HTTPProvider = require('./lib/provider/HTTPProvider');
 
 module.exports = {
     Account: Account,
-    IOST: IOST,
+    RPC: RPC,
     HTTPProvider: HTTPProvider,
 };

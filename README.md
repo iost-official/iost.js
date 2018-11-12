@@ -1,1 +1,1 @@
-# iost.js
+# rpc.js
