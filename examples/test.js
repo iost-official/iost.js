@@ -10,7 +10,7 @@ const rpc = new RPC(new HTTPProvider('http://54.95.136.154:30001'));
 rpc.net.getNetInfo().then(console.log);
 
 // // chainInfo
-// rpc.blockchain.getChainInfo().then(console.log);
+rpc.blockchain.getChainInfo().then(console.log);
 //
 // // getBlockByNum
 // rpc.blockchain.getBlockByNum(1234, 1).then(console.log);
