@@ -3,7 +3,7 @@
 const crypto = require('crypto');
 const secp256k1 = require('secp256k1');
 const base58 = require('bs58');
-const crc32 = require('./crc32');
+const crc32 = require('../lib/crypto/crc32');
 
 Buffer.prototype.toByteArray = function () {
     return Array.prototype.slice.call(this, 0);

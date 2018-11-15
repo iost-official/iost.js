@@ -1,6 +1,6 @@
 'use strict';
 
-const Account = require('./iost/account');
+const Account = require('./old/account');
 const RPC = require('./lib/rpc');
 const HTTPProvider = require('./lib/provider/HTTPProvider');
 

@@ -1,8 +1,8 @@
 'use strict';
 
 const Algorithm = require('../lib/crypto/algorithm');
-const Ed25519 = require('../lib/crypto/ed25519');
-const Secp256k1 = require('../lib/crypto/secp256k1');
+const Ed25519 = require('./ed25519');
+const Secp256k1 = require('./secp256k1');
 const base58 = require('bs58');
 
 Buffer.prototype.toByteArray = function () {
