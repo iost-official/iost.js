@@ -1,26 +1,49 @@
 'use strict';
 
 const RPC = require('../lib/rpc');
+const {Tx} = require('../lib/structs');
+const HTTPProvider = require('../lib/provider/HTTPProvider');
+
 
 class txHandler {
-    constructor(tx, onPending, onSuccess, onFailed) {
+    constructor(tx, rpc) {
         this.tx = tx;
-        this.onPending = onPending;
-        this.onSuccess = onSuccess;
-        this.onFailed = onFailed;
-        this.rpc = new RPC();
-        this.hash = "";
+        this.Pending = function () {};
+        this.Success = function () {};
+        this.Failed = function () {};
+        this._rpc = rpc;
+        this._hash = "";
+    }
+
+    onPending(c) {
+        this.Pending = c;
+        return this
+    }
+
+    onSuccess(c) {
+        this.Success = c;
+        return this
+
+    }
+
+    onFailed(c) {
+        this.Failed = c;
+        return this
+
     }
 
 
     send() {
-        this.rpc.transaction.sendTx(this.tx).then(function (res) {
-            this.hash = res.hash;
-            this.onPending(res)
-        }).catch(this.onFailed);
+        let self = this;
+        self._rpc.transaction.sendTx(self.tx).then(function (res) {
+            self._hash = res.hash;
+            self.Pending(res)
+        }).catch(self.Failed);
+        return self
     }
 
     listen() {
+        let self = this;
         let i = 0;
         let success = false;
         let id = setInterval(function () { //
@@ -29,30 +52,61 @@ class txHandler {
                 return
             }
             i++;
-            this.rpc.transaction.getTxByHash(hash).then(function (res) {
+            self._rpc.transaction.getTxByHash(hash).then(function (res) {
                 success = (res.tx !== undefined)
             })
         }, 2000);
 
-        this.rpc.transaction.getTxReceiptByTxHash(hash).then(function (res) {
+        self._rpc.transaction.getTxReceiptByTxHash(hash).then(function (res) {
             if (res.status.code === 0) {
-                this.onSuccess(res)
+                self.Success(res)
             } else {
-                this.onFailed(res)
+                self.Failed(res)
             }
         })
     }
 
 }
 
+const defaultConfig = {
+    gasPrice: 100,
+    gasLimit: 10000,
+    delay: 0,
+};
+
 class IOST {
-    sendTx(tx, onPending, onSuccess, onFailed) {
-        const th = new txHandler(tx, onPending, onSuccess, onFailed);
-        th.send();
-        th.listen()
+    constructor(config) {
+        if (config === undefined) {
+            this.config = defaultConfig
+        }
+        this.config = config;
+        this.rpc = new RPC(new HTTPProvider('http://192.168.1.144:20001'))
     }
 
-    newAccount(name, ownerkey, activekey) {
+    setPublisher(creator, kp) {
+        this.publisher = creator;
+        this.key = kp
+    }
 
+    callABI(contract, abi, args) {
+        const t = new Tx(this.config.gasPrice, this.config.gasLimit, this.config.delay);
+        t.addAction(contract, abi, JSON.stringify(args));
+        t.addPublishSign(this.publisher, this.key);
+        return new txHandler(t, this.rpc)
+    }
+
+    transfer(token, to, amount) {
+        return this.callABI("iost.token", "transfer", [token, this.publisher, to, amount])
+    }
+
+    newAccount(name, ownerkey, activekey, initialRAM, initialGasPledge) {
+        const t = new Tx(this.config.gasPrice, this.config.gasLimit, this.config.delay);
+        t.addAction("iost.auth", "SignUp", JSON.stringify([name, ownerkey, activekey]));
+        t.addAction("iost.ram", "buy", JSON.stringify([this.publisher, name, initialRAM]));
+        t.addAction("iost.gas", "pledge", JSON.stringify([this.publisher, name, initialGasPledge]));
+        t.addPublishSign(this.publisher, this.key);
+        return new txHandler(t, this.rpc)
     }
 }
+
+module.exports = IOST;
