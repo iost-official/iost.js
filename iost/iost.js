@@ -1,4 +1,4 @@
-'use strict';
+
 
 const RPC = require('../lib/rpc');
 const {Tx} = require('../lib/structs');
