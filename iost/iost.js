@@ -74,6 +74,11 @@ const defaultConfig = {
     delay: 0,
 };
 
+/**
+ * IOST开发工具，可以帮忙发交易
+ * @constructor
+ * @param {object}config - 这个iost的配置
+ */
 class IOST {
     constructor(config) {
         if (config === undefined) {
@@ -83,11 +88,23 @@ class IOST {
         this.rpc = new RPC(new HTTPProvider('http://192.168.1.144:20001'))
     }
 
+    /**
+     * 设置IOST的交易发布者
+     * @param {string}creator - 交易创建者的用户名
+     * @param {KeyPair}kp - 交易创建者的公私钥对
+     */
     setPublisher(creator, kp) {
         this.publisher = creator;
         this.key = kp
     }
 
+    /**
+     * 调用智能合约ABI
+     * @param {string}contract - 智能合约ID或者域名
+     * @param {string}abi - 智能合约ABI
+     * @param {Array}args - 智能合约参数数组
+     * @returns {txHandler}
+     */
     callABI(contract, abi, args) {
         const t = new Tx(this.config.gasPrice, this.config.gasLimit, this.config.delay);
         t.addAction(contract, abi, JSON.stringify(args));
@@ -95,10 +112,26 @@ class IOST {
         return new txHandler(t, this.rpc)
     }
 
+    /**
+     * 转账
+     * @param {string}token - token名
+     * @param {string}to - 收款人
+     * @param {number}amount - 金额
+     * @returns {txHandler}
+     */
     transfer(token, to, amount) {
         return this.callABI("iost.token", "transfer", [token, this.publisher, to, amount])
     }
 
+    /**
+     * 新建账号
+     * @param {string}name - 用户名
+     * @param {string}ownerkey - 用户的owner key
+     * @param {string}activekey - 用户的active key
+     * @param {number}initialRAM - 用户初始RAM
+     * @param {number}initialGasPledge - 用户初始IOST质押
+     * @returns {txHandler}
+     */
     newAccount(name, ownerkey, activekey, initialRAM, initialGasPledge) {
         const t = new Tx(this.config.gasPrice, this.config.gasLimit, this.config.delay);
         t.addAction("iost.auth", "SignUp", JSON.stringify([name, ownerkey, activekey]));
