@@ -12,7 +12,8 @@ npm install iost.js
 ```
 const IOST = require('iost.js')
 
-const rpc = new IOST.RPC(new IOST.HTTPProvider("http://12.34.56.78:30001"));
+// use RPC
+const rpc = new IOST.RPC(new IOST.HTTPProvider("http://localhost:30001"));
 rpc.blockchain.getChainInfo().then(console.log);
 
 // init iost sdk
@@ -20,7 +21,7 @@ let iost = new IOST({ // 如果不设置则使用default配置来发交易
     gasPrice: 100,
     gasLimit: 100000,
     delay:0,
-});
+}, new IOST.HTTPProvider('http://localhost:30001'));
 
 let account = "abc";
 let kp = new IOST.KeyPair(/* your private key in type Buffer */);

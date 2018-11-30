@@ -78,14 +78,15 @@ const defaultConfig = {
  * IOST开发工具，可以帮忙发交易
  * @constructor
  * @param {object}config - 这个iost的配置
+ * @param {HTTPProvider} - provider
  */
 class IOST {
-    constructor(config) {
+    constructor(config, provider) {
         if (config === undefined) {
             this.config = defaultConfig
         }
         this.config = config;
-        this.rpc = new RPC(new HTTPProvider('http://192.168.1.144:20001'))
+        this.rpc = new RPC(provider)
     }
 
     /**
