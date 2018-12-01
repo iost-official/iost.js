@@ -1,6 +1,6 @@
 node_modules
 build
-
+out
 npm-debug.log
 
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio and WebStorm
