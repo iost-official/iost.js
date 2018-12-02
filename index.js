@@ -5,9 +5,9 @@ const KeyPair = require('./lib/crypto/key_pair');
 const {Tx} = require('./lib/structs');
 
 module.exports = {
-	IOST: IOST,
+    IOST: IOST,
     RPC: RPC,
     HTTPProvider: HTTPProvider,
     KeyPair: KeyPair,
-    Tx : Tx,
+    Tx: Tx,
 };
