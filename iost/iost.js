@@ -2,7 +2,6 @@ const RPC = require('../lib/rpc');
 const {Tx} = require('../lib/structs');
 const HTTPProvider = require('../lib/provider/HTTPProvider');
 
-
 class txHandler {
     constructor(tx, rpc) {
         this.tx = tx;
@@ -31,7 +30,6 @@ class txHandler {
             this.status = "success";
         };
         return this
-
     }
 
     onFailed(c) {
@@ -40,7 +38,6 @@ class txHandler {
             this.status = "failed";
         };
         return this
-
     }
 
     send() {
