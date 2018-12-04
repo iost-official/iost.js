@@ -1,5 +1,3 @@
-
-
 const RPC = require('../lib/rpc');
 const {Tx} = require('../lib/structs');
 const HTTPProvider = require('../lib/provider/HTTPProvider');
@@ -8,30 +6,42 @@ const HTTPProvider = require('../lib/provider/HTTPProvider');
 class txHandler {
     constructor(tx, rpc) {
         this.tx = tx;
-        this.Pending = function () {};
-        this.Success = function () {};
-        this.Failed = function () {};
+        this.Pending = function () {
+        };
+        this.Success = function () {
+        };
+        this.Failed = function () {
+        };
         this._rpc = rpc;
         this._hash = "";
+        this.status = "idle"
     }
 
     onPending(c) {
-        this.Pending = c;
+        this.Pending = function (res) {
+            c(res);
+            this.status = "pending";
+        };
         return this
     }
 
     onSuccess(c) {
-        this.Success = c;
+        this.Success = function (res) {
+            c(res);
+            this.status = "success";
+        };
         return this
 
     }
 
     onFailed(c) {
-        this.Failed = c;
+        this.Failed = function (res) {
+            c(res);
+            this.status = "failed";
+        };
         return this
 
     }
-
 
     send() {
         let self = this;
@@ -42,28 +52,28 @@ class txHandler {
         return self
     }
 
-    listen() {
+    listen(interval, times) {
         let self = this;
+
         let i = 0;
-        let success = false;
         let id = setInterval(function () { //
-            if (success || i > 40) {
+            if (self.status === "idle") {
+                return
+            }
+
+            if (self.status === "success" || self.status === "failed" || i > parseInt(times)) {
                 clearInterval(id);
                 return
             }
             i++;
-            self._rpc.transaction.getTxByHash(hash).then(function (res) {
-                success = (res.tx !== undefined)
+            self._rpc.transaction.getTxReceiptByTxHash(self._hash).then(function (res) {
+                if (res.status.code === 0) {
+                    self.Success(res)
+                } else {
+                    self.Failed(res)
+                }
             })
-        }, 2000);
-
-        self._rpc.transaction.getTxReceiptByTxHash(hash).then(function (res) {
-            if (res.status.code === 0) {
-                self.Success(res)
-            } else {
-                self.Failed(res)
-            }
-        })
+        }, parseInt(interval));
     }
 
 }
