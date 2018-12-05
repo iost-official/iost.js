@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: iost/iost.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: iost/iost.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>const RPC = require('../lib/rpc');
+const {Tx} = require('../lib/structs');
+const HTTPProvider = require('../lib/provider/HTTPProvider');
+
+
+class txHandler {
+    constructor(tx, rpc) {
+        this.tx = tx;
+        this.Pending = function () {
+        };
+        this.Success = function () {
+        };
+        this.Failed = function () {
+        };
+        this._rpc = rpc;
+        this._hash = "";
+        this.status = "idle"
+    }
+
+    onPending(c) {
+        this.Pending = function (res) {
+            c(res);
+            this.status = "pending";
+        };
+        return this
+    }
+
+    onSuccess(c) {
+        this.Success = function (res) {
+            c(res);
+            this.status = "success";
+        };
+        return this
+
+    }
+
+    onFailed(c) {
+        this.Failed = function (res) {
+            c(res);
+            this.status = "failed";
+        };
+        return this
+
+    }
+
+    send() {
+        let self = this;
+        self._rpc.transaction.sendTx(self.tx).then(function (res) {
+            self._hash = res.hash;
+            self.Pending(res)
+        }).catch(self.Failed);
+        return self
+    }
+
+    listen(interval, times) {
+        let self = this;
+
+        let i = 0;
+        let id = setInterval(function () { //
+            if (self.status === "idle") {
+                return
+            }
+
+            if (self.status === "success" || self.status === "failed" || i > parseInt(times)) {
+                clearInterval(id);
+                return
+            }
+            i++;
+            self._rpc.transaction.getTxReceiptByTxHash(self._hash).then(function (res) {
+                if (res.status_code === "SUCCESS") {
+                    self.Success(res)
+                } else {
+                    self.Failed(res)
+                }
+            })
+        }, parseInt(interval));
+    }
+
+}
+
+const defaultConfig = {
+    gasPrice: 100,
+    gasLimit: 10000,
+    delay: 0,
+};
+
+/**
+ * IOST开发工具，可以帮忙发交易
+ * @constructor
+ * @param {object}config - 这个iost的配置
+ * @param {HTTPProvider} - provider
+ */
+class IOST {
+    constructor(config, provider) {
+        if (config === undefined) {
+            this.config = defaultConfig
+        }
+        this.config = config;
+        this.rpc = new RPC(provider)
+    }
+
+    /**
+     * 设置IOST的交易发布者
+     * @param {string}creator - 交易创建者的用户名
+     * @param {KeyPair}kp - 交易创建者的公私钥对
+     */
+    setPublisher(creator, kp) {
+        this.publisher = creator;
+        this.key = kp
+    }
+
+    /**
+     * 调用智能合约ABI
+     * @param {string}contract - 智能合约ID或者域名
+     * @param {string}abi - 智能合约ABI
+     * @param {Array}args - 智能合约参数数组
+     * @returns {txHandler}
+     */
+    callABI(contract, abi, args) {
+        const t = new Tx(this.config.gasPrice, this.config.gasLimit, this.config.delay);
+        t.addAction(contract, abi, JSON.stringify(args));
+        t.addPublishSign(this.publisher, this.key);
+        return new txHandler(t, this.rpc)
+    }
+
+    /**
+     * 转账
+     * @param {string}token - token名
+     * @param {string}to - 收款人
+     * @param {number}amount - 金额
+     * @returns {txHandler}
+     */
+    transfer(token, to, amount) {
+        return this.callABI("iost.token", "transfer", [token, this.publisher, to, amount])
+    }
+
+    /**
+     * 新建账号
+     * @param {string}name - 用户名
+     * @param {string}ownerkey - 用户的owner key
+     * @param {string}activekey - 用户的active key
+     * @param {number}initialRAM - 用户初始RAM
+     * @param {number}initialGasPledge - 用户初始IOST质押
+     * @returns {txHandler}
+     */
+    newAccount(name, ownerkey, activekey, initialRAM, initialGasPledge) {
+        const t = new Tx(this.config.gasPrice, this.config.gasLimit, this.config.delay);
+        t.addAction("iost.auth", "SignUp", JSON.stringify([name, ownerkey, activekey]));
+        t.addAction("iost.ram", "buy", JSON.stringify([this.publisher, name, initialRAM]));
+        t.addAction("iost.gas", "pledge", JSON.stringify([this.publisher, name, initialGasPledge]));
+        t.addPublishSign(this.publisher, this.key);
+        return new txHandler(t, this.rpc)
+    }
+}
+
+module.exports = IOST;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Blockchain.html">Blockchain</a></li><li><a href="HTTPProvider.html">HTTPProvider</a></li><li><a href="IOST.html">IOST</a></li><li><a href="KeyPair.html">KeyPair</a></li><li><a href="Net.html">Net</a></li><li><a href="RPC.html">RPC</a></li><li><a href="Transaction.html">Transaction</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Wed Dec 05 2018 17:42:30 GMT+0800 (CST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
