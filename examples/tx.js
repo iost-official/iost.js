@@ -1,5 +1,6 @@
 const IOST = require('iost.js');
 const bs58 = require('bs58');
+const KeyPair = require('../lib/crypto/key_pair');
 
 // init iost sdk
 let iost = new IOST({ // 如果不设置则使用default配置来发交易
@@ -27,3 +28,23 @@ handler
     .send()
     .listen();
 
+const newKP = KeyPair.newKeyPair();
+
+let newAccountHandler = iost.newAccount(
+    "accountname",
+    newKP.id,
+    newKP.id,
+    1024,
+    10
+);
+
+newAccountHandler
+    .onPending(function (response) {
+        console.log("account request: "+ response.hash + " has sent to node")
+    })
+    .onSuccess(function (response) {
+        console.log("sign up success, here is the receipt: "+ JSON.stringify(response))
+    })
+    .onFailed(console.log)
+    .send()
+    .listen();
