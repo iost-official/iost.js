@@ -79,7 +79,7 @@ class txHandler {
 }
 
 const defaultConfig = {
-    gasPrice: 100,
+    gasRatio: 100,
     gasLimit: 10000,
     delay: 0,
 };
@@ -117,8 +117,9 @@ class IOST {
      * @returns {txHandler}
      */
     callABI(contract, abi, args) {
-        const t = new Tx(this.config.gasPrice, this.config.gasLimit, this.config.delay);
+        const t = new Tx(this.config.gasRatio, this.config.gasLimit, this.config.delay);
         t.addAction(contract, abi, JSON.stringify(args));
+        t.setTime(90, 0);
         t.addPublishSign(this.publisher, this.key);
         return new txHandler(t, this.rpc)
     }
