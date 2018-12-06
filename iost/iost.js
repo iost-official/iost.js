@@ -1,82 +1,6 @@
 const RPC = require('../lib/rpc');
 const {Tx} = require('../lib/structs');
-const HTTPProvider = require('../lib/provider/HTTPProvider');
-
-
-class txHandler {
-    constructor(tx, rpc) {
-        this.tx = tx;
-        this.Pending = function () {
-        };
-        this.Success = function () {
-        };
-        this.Failed = function () {
-        };
-        this._rpc = rpc;
-        this._hash = "";
-        this.status = "idle"
-    }
-
-    onPending(c) {
-        this.Pending = function (res) {
-            c(res);
-            this.status = "pending";
-        };
-        return this
-    }
-
-    onSuccess(c) {
-        this.Success = function (res) {
-            c(res);
-            this.status = "success";
-        };
-        return this
-
-    }
-
-    onFailed(c) {
-        this.Failed = function (res) {
-            c(res);
-            this.status = "failed";
-        };
-        return this
-
-    }
-
-    send() {
-        let self = this;
-        self._rpc.transaction.sendTx(self.tx).then(function (res) {
-            self._hash = res.hash;
-            self.Pending(res)
-        }).catch(self.Failed);
-        return self
-    }
-
-    listen(interval, times) {
-        let self = this;
-
-        let i = 1;
-        let id = setInterval(function () { //
-            if (self.status === "idle") {
-                return
-            }
-
-            if (self.status === "success" || self.status === "failed" || i > parseInt(times)) {
-                clearInterval(id);
-                return
-            }
-            i++;
-            self._rpc.transaction.getTxReceiptByTxHash(self._hash).then(function (res) {
-                if (res.status_code === "SUCCESS") {
-                    self.Success(res)
-                } else {
-                    self.Failed(res)
-                }
-            })
-        }, parseInt(interval));
-    }
-
-}
+const TxHandler = require('./tx_handler');
 
 const defaultConfig = {
     gasRatio: 100,
@@ -91,22 +15,11 @@ const defaultConfig = {
  * @param {HTTPProvider} - provider
  */
 class IOST {
-    constructor(config, provider) {
+    constructor(config) {
         if (config === undefined) {
             this.config = defaultConfig
         }
         this.config = config;
-        this.rpc = new RPC(provider)
-    }
-
-    /**
-     * 设置IOST的交易发布者
-     * @param {string}creator - 交易创建者的用户名
-     * @param {KeyPair}kp - 交易创建者的公私钥对
-     */
-    setPublisher(creator, kp) {
-        this.publisher = creator;
-        this.key = kp
     }
 
     /**
@@ -114,14 +27,13 @@ class IOST {
      * @param {string}contract - 智能合约ID或者域名
      * @param {string}abi - 智能合约ABI
      * @param {Array}args - 智能合约参数数组
-     * @returns {txHandler}
+     * @returns {Tx}
      */
     callABI(contract, abi, args) {
         const t = new Tx(this.config.gasRatio, this.config.gasLimit, this.config.delay);
         t.addAction(contract, abi, JSON.stringify(args));
         t.setTime(90, 0);
-        t.addPublishSign(this.publisher, this.key);
-        return new txHandler(t, this.rpc)
+        return t
     }
 
     /**
@@ -130,7 +42,7 @@ class IOST {
      * @param {string}to - 收款人
      * @param {string}amount - 金额
      * @param {string}memo - 转账备注
-     * @returns {txHandler}
+     * @returns {Tx}
      */
     transfer(token, to, amount, memo) {
         return this.callABI("iost.token", "transfer", [token, this.publisher, to, amount, memo])
@@ -143,15 +55,14 @@ class IOST {
      * @param {string}activekey - 用户的active key
      * @param {number}initialRAM - 用户初始RAM
      * @param {number}initialGasPledge - 用户初始IOST质押
-     * @returns {txHandler}
+     * @returns {Tx}
      */
     newAccount(name, ownerkey, activekey, initialRAM, initialGasPledge) {
         const t = new Tx(this.config.gasPrice, this.config.gasLimit, this.config.delay);
         t.addAction("iost.auth", "SignUp", JSON.stringify([name, ownerkey, activekey]));
         t.addAction("iost.ram", "buy", JSON.stringify([this.publisher, name, initialRAM]));
         t.addAction("iost.gas", "pledge", JSON.stringify([this.publisher, name, initialGasPledge]));
-        t.addPublishSign(this.publisher, this.key);
-        return new txHandler(t, this.rpc)
+        return t
     }
 }
 

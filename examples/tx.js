@@ -1,21 +1,25 @@
-const IOST = require('iost.js');
+const IOST = require('../index');
 const bs58 = require('bs58');
-const KeyPair = require('../lib/crypto/key_pair');
+
+// set up account
+let account = new IOST.Account("your_account_name");
+let kp = new IOST.KeyPair(bs58.decode('your_seckey_in_base58'));
+account.addKeyPair(kp, "active");
 
 // init iost sdk
-let iost = new IOST({ // 如果不设置则使用default配置来发交易
+let iost = new IOST.IOST({
     gasRatio: 100,
     gasLimit: 100000,
     delay:0,
-}, new IOST.HTTPProvider('http://localhost:30001'));
+});
 
-let account = "abc";
-let kp = new IOST.KeyPair(bs58.decode('1rANSfcRzr4HkhbUFZ7L1Zp69JZZHiDDq5v7dNSbbEqeU4jxy3fszV4HGiaLQEyqVpS1dKT9g7zCVRxBVzuiUzB'));
+let tx = iost.callABI("token.iost", "transfer", ["iost", "admin", "admin", "1000.000", "memo"]);
 
-iost.setPublisher(account, kp);
+account.PublishTx(tx);
 
 // send a call
-let handler = iost.callABI("token.iost", "transfer", ["iost", "form", "to", "1000.000"]);
+const rpc = new IOST.RPC(new IOST.HTTPProvider('http://yourhost:30001'));
+let handler = new IOST.TxHandler(tx, rpc);
 
 handler
     .onPending(function (response) {
@@ -28,23 +32,23 @@ handler
     .send()
     .listen(1000, 90);
 
-const newKP = KeyPair.newKeyPair();
-
-let newAccountHandler = iost.newAccount(
-    "accountname",
-    newKP.id,
-    newKP.id,
-    1024,
-    10
-);
-
-newAccountHandler
-    .onPending(function (response) {
-        console.log("account request: "+ response.hash + " has sent to node")
-    })
-    .onSuccess(function (response) {
-        console.log("sign up success, here is the receipt: "+ JSON.stringify(response))
-    })
-    .onFailed(console.log)
-    .send()
-    .listen();
+// const newKP = KeyPair.newKeyPair();
+//
+// let newAccountHandler = iost.newAccount(
+//     "accountname",
+//     newKP.id,
+//     newKP.id,
+//     1024,
+//     10
+// );
+//
+// newAccountHandler
+//     .onPending(function (response) {
+//         console.log("account request: "+ response.hash + " has sent to node")
+//     })
+//     .onSuccess(function (response) {
+//         console.log("sign up success, here is the receipt: "+ JSON.stringify(response))
+//     })
+//     .onFailed(console.log)
+//     .send()
+//     .listen();
