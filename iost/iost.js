@@ -128,11 +128,12 @@ class IOST {
      * 转账
      * @param {string}token - token名
      * @param {string}to - 收款人
-     * @param {number}amount - 金额
+     * @param {string}amount - 金额
+     * @param {string}memo - 转账备注
      * @returns {txHandler}
      */
-    transfer(token, to, amount) {
-        return this.callABI("iost.token", "transfer", [token, this.publisher, to, amount])
+    transfer(token, to, amount, memo) {
+        return this.callABI("iost.token", "transfer", [token, this.publisher, to, amount, memo])
     }
 
     /**
