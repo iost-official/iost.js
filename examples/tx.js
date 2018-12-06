@@ -4,7 +4,7 @@ const KeyPair = require('../lib/crypto/key_pair');
 
 // init iost sdk
 let iost = new IOST({ // 如果不设置则使用default配置来发交易
-    gasPrice: 100,
+    gasRatio: 100,
     gasLimit: 100000,
     delay:0,
 }, new IOST.HTTPProvider('http://localhost:30001'));
@@ -15,7 +15,7 @@ let kp = new IOST.KeyPair(bs58.decode('1rANSfcRzr4HkhbUFZ7L1Zp69JZZHiDDq5v7dNSbb
 iost.setPublisher(account, kp);
 
 // send a call
-let handler = iost.callABI("iost.token", "transfer", ["iost", "form", "to", "1000.000"]);
+let handler = iost.callABI("token.iost", "transfer", ["iost", "form", "to", "1000.000"]);
 
 handler
     .onPending(function (response) {
@@ -26,7 +26,7 @@ handler
     })
     .onFailed(console.log)
     .send()
-    .listen();
+    .listen(1000, 90);
 
 const newKP = KeyPair.newKeyPair();
 
