@@ -55,7 +55,7 @@ class txHandler {
     listen(interval, times) {
         let self = this;
 
-        let i = 0;
+        let i = 1;
         let id = setInterval(function () { //
             if (self.status === "idle") {
                 return
