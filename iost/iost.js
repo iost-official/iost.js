@@ -6,6 +6,7 @@ const defaultConfig = {
     gasRatio: 100,
     gasLimit: 10000,
     delay: 0,
+    expiration: 90,
 };
 
 /**
@@ -45,7 +46,7 @@ class IOST {
      * @returns {Tx}
      */
     transfer(token, to, amount, memo) {
-        return this.callABI("iost.token", "transfer", [token, this.publisher, to, amount, memo])
+        return this.callABI("token.iost", "transfer", [token, this.publisher, to, amount, memo])
     }
 
     /**
@@ -59,11 +60,14 @@ class IOST {
      */
     newAccount(name, ownerkey, activekey, initialRAM, initialGasPledge) {
         const t = new Tx(this.config.gasPrice, this.config.gasLimit, this.config.delay);
-        t.addAction("iost.auth", "SignUp", JSON.stringify([name, ownerkey, activekey]));
-        t.addAction("iost.ram", "buy", JSON.stringify([this.publisher, name, initialRAM]));
-        t.addAction("iost.gas", "pledge", JSON.stringify([this.publisher, name, initialGasPledge]));
+        t.addAction("auth.iost", "SignUp", JSON.stringify([name, ownerkey, activekey]));
+        t.addAction("ram.iost", "buy", JSON.stringify([this.publisher, name, initialRAM]));
+        t.addAction("gas.iost", "pledge", JSON.stringify([this.publisher, name, initialGasPledge+""]));
+        t.setTime(90, 0);
         return t
     }
+
+
 }
 
 module.exports = IOST;

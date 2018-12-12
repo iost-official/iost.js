@@ -19,7 +19,8 @@ account.PublishTx(tx);
 
 // send a call
 const rpc = new IOST.RPC(new IOST.HTTPProvider('http://iserverhost:30001'));
-let handler = new IOST.TxHandler(tx, rpc);
+
+let handler = new IOST.TxHandler(tx, rpc); //or rpc.transaction.sendTx(tx);
 
 handler
     .onPending(function (response) {

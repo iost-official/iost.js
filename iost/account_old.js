@@ -21,7 +21,7 @@ class Account {
         return this._kp[permission]
     }
     static import(json) {
-        const obj = JSON.parse(json)
+        const obj = JSON.parse(json)  // TODO
     }
     SignTx(t, permission) {
         t.addSign(this._key_pair[permission])
