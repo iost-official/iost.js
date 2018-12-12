@@ -1,21 +1,21 @@
-const IOST = require('iost.js');
+const IOST = require('../index');
 const bs58 = require('bs58');
 const KeyPair = require('../lib/crypto/key_pair');
 
 // init iost sdk
-let iost = new IOST({ // 如果不设置则使用default配置来发交易
-    gasRatio: 100,
+let iost = new IOST.IOST({ // 如果不设置则使用default配置来发交易
+    gasRatio: 1,
     gasLimit: 100000,
     delay:0,
-}, new IOST.HTTPProvider('http://localhost:30001'));
+}, new IOST.HTTPProvider('http://47.244.109.92:30001'));
 
-let account = "abc";
-let kp = new IOST.KeyPair(bs58.decode('1rANSfcRzr4HkhbUFZ7L1Zp69JZZHiDDq5v7dNSbbEqeU4jxy3fszV4HGiaLQEyqVpS1dKT9g7zCVRxBVzuiUzB'));
+let account = "admin";
+let kp = new KeyPair(bs58.decode('2yquS3ySrGWPEKywCPzX4RTJugqRh7kJSo5aehsLYPEWkUxBWA39oMrZ7ZxuM4fgyXYs2cPwh5n8aNNpH5x2VyK1'));
 
 iost.setPublisher(account, kp);
 
 // send a call
-let handler = iost.callABI("token.iost", "transfer", ["iost", "form", "to", "1000.000"]);
+let handler = iost.callABI("token.iost", "transfer", ["iost", "admin", "admin", "1000.000", ""]);
 
 handler
     .onPending(function (response) {
@@ -35,7 +35,7 @@ let newAccountHandler = iost.newAccount(
     newKP.id,
     newKP.id,
     1024,
-    10
+    "10"
 );
 
 newAccountHandler
@@ -47,4 +47,4 @@ newAccountHandler
     })
     .onFailed(console.log)
     .send()
-    .listen();
+    .listen(1000, 1);

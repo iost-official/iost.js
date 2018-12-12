@@ -69,7 +69,7 @@ class txHandler {
             self._rpc.transaction.getTxReceiptByTxHash(self._hash).then(function (res) {
                 if (res.status_code === "SUCCESS") {
                     self.Success(res)
-                } else {
+                } else if (res == '') {
                     self.Failed(res)
                 }
             })
@@ -145,10 +145,11 @@ class IOST {
      * @returns {txHandler}
      */
     newAccount(name, ownerkey, activekey, initialRAM, initialGasPledge) {
-        const t = new Tx(this.config.gasPrice, this.config.gasLimit, this.config.delay);
-        t.addAction("iost.auth", "SignUp", JSON.stringify([name, ownerkey, activekey]));
-        t.addAction("iost.ram", "buy", JSON.stringify([this.publisher, name, initialRAM]));
-        t.addAction("iost.gas", "pledge", JSON.stringify([this.publisher, name, initialGasPledge]));
+        const t = new Tx(this.config.gasRatio, this.config.gasLimit, this.config.delay);
+        t.addAction("auth.iost", "SignUp", JSON.stringify([name, ownerkey, activekey]));
+        t.addAction("ram.iost", "buy", JSON.stringify([this.publisher, name, initialRAM]));
+        t.addAction("gas.iost", "pledge", JSON.stringify([this.publisher, name, initialGasPledge]));
+        t.setTime(90, 0);
         t.addPublishSign(this.publisher, this.key);
         return new txHandler(t, this.rpc)
     }
