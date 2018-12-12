@@ -1,4 +1,4 @@
-const IOST = require('iost.js');
+const IOST = require('../iost');
 
 const rpc = new IOST.RPC(new IOST.HTTPProvider('http://localhost:30001'));
 

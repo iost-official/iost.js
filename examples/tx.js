@@ -9,8 +9,8 @@ let iost = new IOST.IOST({ // 如果不设置则使用default配置来发交易
     delay:0,
 }, new IOST.HTTPProvider('http://47.244.109.92:30001'));
 
-let account = "admin";
-let kp = new KeyPair(bs58.decode('2yquS3ySrGWPEKywCPzX4RTJugqRh7kJSo5aehsLYPEWkUxBWA39oMrZ7ZxuM4fgyXYs2cPwh5n8aNNpH5x2VyK1'));
+let account = "";
+let kp = new KeyPair(bs58.decode(''));
 
 iost.setPublisher(account, kp);
 
