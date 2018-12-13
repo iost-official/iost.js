@@ -3,7 +3,7 @@ const {Tx} = require('../lib/structs');
 const TxHandler = require('./tx_handler');
 
 const defaultConfig = {
-    gasRatio: 100,
+    gasRatio: 1,
     gasLimit: 10000,
     delay: 0,
     expiration: 90,
@@ -59,7 +59,7 @@ class IOST {
      * @returns {Tx}
      */
     newAccount(name, ownerkey, activekey, initialRAM, initialGasPledge) {
-        const t = new Tx(this.config.gasPrice, this.config.gasLimit, this.config.delay);
+        const t = new Tx(this.config.gasRatio, this.config.gasLimit, this.config.delay);
         t.addAction("auth.iost", "SignUp", JSON.stringify([name, ownerkey, activekey]));
         t.addAction("ram.iost", "buy", JSON.stringify([this.publisher, name, initialRAM]));
         t.addAction("gas.iost", "pledge", JSON.stringify([this.publisher, name, initialGasPledge+""]));

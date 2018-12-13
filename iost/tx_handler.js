@@ -69,7 +69,7 @@ class TxHandler {
             self._rpc.transaction.getTxReceiptByTxHash(self._hash).then(function (res) {
                 if (res.status_code === "SUCCESS") {
                     self.Success(res)
-                } else {
+                } else if (res.status_code !== undefined){
                     self.Failed(res)
                 }
             })

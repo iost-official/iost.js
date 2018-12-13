@@ -9,7 +9,7 @@ class Account {
         if (permission === "") {
             permission = this._key_id[kp.id];
             if (!permission) {
-                return
+                throw 'key pair not exist'
             }
         }
         this._key_pair[permission] = kp
