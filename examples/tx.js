@@ -19,7 +19,7 @@ account.addKeyPair(kp, "active");
 // send a call
 const tx = iost.callABI("token.iost", "transfer", ["iost", "admin", "admin", "10.000", ""]);
 
-account.PublishTx(tx);
+account.signTx(tx);
 
 const handler = new IOST.TxHandler(tx, rpc);
 
@@ -44,7 +44,7 @@ const newAccountTx = iost.newAccount(
     10
 );
 
-account.PublishTx(newAccountTx);
+account.signTx(newAccountTx);
 
 console.log("new seckey is "+ newKP.B58SecKey());
 

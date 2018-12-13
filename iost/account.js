@@ -23,10 +23,10 @@ class Account {
     static import(json) {
         const obj = JSON.parse(json)  // TODO
     }
-    SignTx(t, permission) {
+    sign(t, permission) {
         t.addSign(this._key_pair[permission])
     }
-    PublishTx(t) {
+    signTx(t) {
         t.addPublishSign(this._id, this._key_pair["active"])
     }
 }
