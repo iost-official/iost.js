@@ -9,13 +9,13 @@ let iost = new IOST.IOST({ // 如果不设置则使用default配置来发交易
     delay:0,
 }, new IOST.HTTPProvider('http://47.244.109.92:30001'));
 
-let account = "";
-let kp = new KeyPair(bs58.decode(''));
+let account = "testaccount";
+let kp = new KeyPair(bs58.decode('4LNkrANP7tzvyy24GKZFRnUPpawLrD6nbrusbB7sJr9Kb2G9oW5dmdjENcFBkYAfKWNqKf7eywLqajxXSRc5ANVi'));
 
 iost.setPublisher(account, kp);
 
 // send a call
-let handler = iost.callABI("token.iost", "transfer", ["iost", "admin", "admin", "1000.000", ""]);
+let handler = iost.callABI("token.iost", "transfer", ["iost", "admin", "admin", "10.000", ""]);
 
 handler
     .onPending(function (response) {
@@ -31,7 +31,7 @@ handler
 const newKP = KeyPair.newKeyPair();
 
 let newAccountHandler = iost.newAccount(
-    "accountname",
+    "test1",
     newKP.id,
     newKP.id,
     1024,
