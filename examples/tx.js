@@ -45,11 +45,10 @@ const newAccountHandler = new IOST.TxHandler(newAccountTx, rpc);
 
 newAccountHandler
     .onPending(function (response) {
-        console.log("account request response: " + response);
         console.log("account request: "+ response.hash + " has sent to node")
     })
     .onSuccess(function (response) {
         console.log("sign up success, here is the receipt: "+ JSON.stringify(response))
     })
     .send()
-    .listen(1000, 1);
+    .listen(1000, 90);
