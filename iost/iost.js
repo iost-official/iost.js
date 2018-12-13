@@ -52,17 +52,18 @@ class IOST {
     /**
      * 新建账号
      * @param {string}name - 用户名
+     * @param {string}creator - 帐号创建者的用户名
      * @param {string}ownerkey - 用户的owner key
      * @param {string}activekey - 用户的active key
      * @param {number}initialRAM - 用户初始RAM
      * @param {number}initialGasPledge - 用户初始IOST质押
      * @returns {Tx}
      */
-    newAccount(name, ownerkey, activekey, initialRAM, initialGasPledge) {
+    newAccount(name, creator, ownerkey, activekey, initialRAM, initialGasPledge) {
         const t = new Tx(this.config.gasRatio, this.config.gasLimit, this.config.delay);
         t.addAction("auth.iost", "SignUp", JSON.stringify([name, ownerkey, activekey]));
-        t.addAction("ram.iost", "buy", JSON.stringify([this.publisher, name, initialRAM]));
-        t.addAction("gas.iost", "pledge", JSON.stringify([this.publisher, name, initialGasPledge+""]));
+        t.addAction("ram.iost", "buy", JSON.stringify([creator, name, initialRAM]));
+        t.addAction("gas.iost", "pledge", JSON.stringify([creator, name, initialGasPledge+""]));
         t.setTime(90, 0);
         return t
     }

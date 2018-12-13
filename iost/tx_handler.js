@@ -3,11 +3,15 @@ const {Tx} = require('../lib/structs');
 class TxHandler {
     constructor(tx, rpc) {
         this.tx = tx;
-        this.Pending = function () {
+        let self = this;
+        this.Pending = function (response) {
+            console.log("tx: "+ response.hash + " has sent to node: " + JSON.stringify(self.tx.actions));
         };
-        this.Success = function () {
+        this.Success = function (response) {
+            console.log("tx: " + response.hash + " success, here is the receipt: "+ JSON.stringify(response));
         };
-        this.Failed = function () {
+        this.Failed = function (res) {
+            console.log("Error tx failed, " + JSON.stringify(self.tx) + " res: " + res);
         };
         this._rpc = rpc;
         this._hash = "";
@@ -63,6 +67,9 @@ class TxHandler {
 
             if (self.status === "success" || self.status === "failed" || i > parseInt(times)) {
                 clearInterval(id);
+                if (self.status !== "success" && i > parseInt(times)) {
+                    self.Failed("Error: tx " + self._hash + " on chain timeout.");
+                }
                 return
             }
             i++;
@@ -72,6 +79,7 @@ class TxHandler {
                 } else if (res.status_code !== undefined){
                     self.Failed(res)
                 }
+            }).catch(function (e) {
             })
         }, parseInt(interval));
     }
