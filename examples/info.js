@@ -1,6 +1,6 @@
-const IOST = require('../iost');
+const IOST = require('../index');
 
-const rpc = new IOST.RPC(new IOST.HTTPProvider('http://localhost:30001'));
+const rpc = new IOST.RPC(new IOST.HTTPProvider('http://47.244.109.92:30001'));
 
 rpc.net.getNodeInfo().then(console.log);
 
