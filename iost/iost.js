@@ -66,8 +66,6 @@ class IOST {
         t.setTime(90, 0);
         return t
     }
-
-
 }
 
 module.exports = IOST;
