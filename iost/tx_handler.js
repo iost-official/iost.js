@@ -24,8 +24,8 @@ class TxHandler {
     onPending(c) {
         let self = this;
         this.Pending = function (res) {
-            c(res);
-            self.status = "pending";
+           c(res).catch(e => console.error("on pending failed. ", e));
+           self.status = "pending";
         };
         return this
     }
@@ -33,7 +33,7 @@ class TxHandler {
     onSuccess(c) {
         let self = this;
         this.Success = function (res) {
-            c(res);
+            c(res).catch(e => console.error("on pending failed. ", e));
             self.status = "success";
         };
         return this
@@ -43,7 +43,7 @@ class TxHandler {
     onFailed(c) {
         let self = this;
         this.Failed = function (res) {
-            c(res);
+            c(res).catch(e => console.error("on pending failed. ", e));
             self.status = "failed";
         };
         return this
