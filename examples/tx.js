@@ -21,13 +21,14 @@ account.addKeyPair(kp, "active");
 const tx = iost.callABI("token.iost", "transfer", ["iost", "admin", "admin", "10.000", ""]);
 account.signTx(tx);
 
+// send tx and handler result
 const handler = new IOST.TxHandler(tx, rpc);
 handler
     .send()
     .listen(1000, 90);
 
+// new keypair and create account
 const newKP = KeyPair.newKeyPair();
-
 const newAccountTx = iost.newAccount(
     "test1",
     "admin",
@@ -36,13 +37,11 @@ const newAccountTx = iost.newAccount(
     1024,
     10
 );
-
 account.signTx(newAccountTx);
 
 console.log("new seckey is "+ newKP.B58SecKey());
 
 const newAccountHandler = new IOST.TxHandler(newAccountTx, rpc);
-
 newAccountHandler
     .onPending(function (response) {
         console.log("account request: "+ response.hash + " has sent to node")

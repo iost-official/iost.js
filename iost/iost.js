@@ -40,13 +40,14 @@ class IOST {
     /**
      * 转账
      * @param {string}token - token名
+     * @param {string}from - 付款人
      * @param {string}to - 收款人
      * @param {string}amount - 金额
      * @param {string}memo - 转账备注
      * @returns {Tx}
      */
-    transfer(token, to, amount, memo) {
-        return this.callABI("token.iost", "transfer", [token, this.publisher, to, amount, memo])
+    transfer(token, from, to, amount, memo = "") {
+        return this.callABI("token.iost", "transfer", [token, from, to, amount, memo])
     }
 
     /**
