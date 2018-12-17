@@ -10,6 +10,10 @@ rpc.blockchain.getChainInfo().then(function(res) {
     console.log("GetChainInfo result: " + JSON.stringify(res, null, '\t'))
 });
 
+rpc.blockchain.getBlockByNum(1, true).then(function(res) {
+    console.log("GetBlock result: " + JSON.stringify(res, null, '\t'))
+});
+
 rpc.transaction.getTxReceiptByTxHash("abc").then(function(res) {
     console.log("GetTxReceiptByTxHash result: " + JSON.stringify(res, null, '\t'))
 });

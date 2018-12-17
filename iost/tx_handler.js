@@ -24,8 +24,8 @@ class TxHandler {
     onPending(c) {
         let self = this;
         this.Pending = function (res) {
-           c(res).catch(e => console.error("on pending failed. ", e));
-           self.status = "pending";
+            self.status = "pending";
+            c(res).catch(e => console.error("on pending failed. ", e));
         };
         return this
     }
@@ -33,8 +33,8 @@ class TxHandler {
     onSuccess(c) {
         let self = this;
         this.Success = function (res) {
-            c(res).catch(e => console.error("on pending failed. ", e));
             self.status = "success";
+            c(res).catch(e => console.error("on success failed. ", e));
         };
         return this
 
@@ -43,8 +43,8 @@ class TxHandler {
     onFailed(c) {
         let self = this;
         this.Failed = function (res) {
-            c(res).catch(e => console.error("on pending failed. ", e));
             self.status = "failed";
+            c(res).catch(e => console.error("on failed failed. ", e));
         };
         return this
 
@@ -76,9 +76,9 @@ class TxHandler {
             }
             i++;
             self._rpc.transaction.getTxReceiptByTxHash(self._hash).then(function (res) {
-                if (res.status_code === "SUCCESS") {
+                if (res.status_code === "SUCCESS" && self.status === "pending") {
                     self.Success(res)
-                } else if (res.status_code !== undefined){
+                } else if (res.status_code !== undefined && self.status === "pending"){
                     self.Failed(res)
                 }
             }).catch(function (e) {
