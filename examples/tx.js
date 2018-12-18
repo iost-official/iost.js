@@ -3,7 +3,7 @@ const bs58 = require('bs58');
 const KeyPair = require('../lib/crypto/key_pair');
 
 // init iost sdk
-const iost = new IOST.IOST({ // 如果不设置则使用default配置来发交易
+const iost = new IOST.IOST({ // will use default setting if not set
     gasRatio: 1,
     gasLimit: 100000,
     delay:0,

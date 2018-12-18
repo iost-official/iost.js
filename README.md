@@ -1,11 +1,12 @@
 # iost.js
 
-JS SDK of IOST，可以方便地与全节点进行交互，兼容浏览器环境和NodeJS环境
+JS SDK of IOST，helps developers interact with iost blockchain node, including geting block data, sending transactions, etc.
+It can be used in browsers and also on nodejs platform.
 
 ## Installation
 Using npm in your project
 ```
-npm install iost.js 
+npm install iost
 ```
 
 ## Usage
@@ -17,7 +18,7 @@ const rpc = new IOST.RPC(new IOST.HTTPProvider("http://localhost:30001"));
 rpc.blockchain.getChainInfo().then(console.log);
 
 // init iost sdk
-let iost = new IOST({ // 如果不设置则使用default配置来发交易
+let iost = new IOST({ // will use default setting if not set
     gasPrice: 100,
     gasLimit: 100000,
     delay:0,
