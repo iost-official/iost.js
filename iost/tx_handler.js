@@ -25,9 +25,13 @@ class TxHandler {
         let self = this;
         this.Pending = function (res) {
             self.status = "pending";
-            let p = c(res);
-            if (typeof p === "object" && typeof p.catch === 'function') {
-                p.catch(e => console.error("on pending failed. ", e));
+            try {
+                let p = c(res);
+                if (typeof p === "object" && typeof p.catch === 'function') {
+                    p.catch(e => console.error("on pending failed. ", e));
+                }
+            } catch (e) {
+                console.error("on pending failed. ", e);
             }
         };
         return this
@@ -37,9 +41,13 @@ class TxHandler {
         let self = this;
         this.Success = function (res) {
             self.status = "success";
-            let p = c(res);
-            if (typeof p === "object" && typeof p.catch === 'function') {
-                p.catch(e => console.error("on success failed. ", e));
+            try {
+                let p = c(res);
+                if (typeof p === "object" && typeof p.catch === 'function') {
+                    p.catch(e => console.error("on success failed. ", e));
+                }
+            } catch (e) {
+                console.error("on success failed. ", e);
             }
         };
         return this
@@ -50,9 +58,13 @@ class TxHandler {
         let self = this;
         this.Failed = function (res) {
             self.status = "failed";
-            let p = c(res);
-            if (typeof p === "object" && typeof p.catch === 'function') {
-                p.catch(e => console.error("on failed failed. ", e));
+            try {
+                let p = c(res);
+                if (typeof p === "object" && typeof p.catch === 'function') {
+                    p.catch(e => console.log("on failed failed. ", e));
+                }
+            } catch (e) {
+                console.log("on failed failed. ", e);
             }
         };
         return this

@@ -94,8 +94,8 @@ delay().then(function () {
         let ob0 = await rpc.blockchain.getToken721Balance(accountList[0].getID(), tokenSym);
 
         // issue token
-        let tx = iost.callABI("token721.iost", "issue", [tokenSym, accountList[0].getID(), {"name": "pikaqiu", "hp": 300}]);
-        tx.addAction("token721.iost", "issue", JSON.stringify([tokenSym, accountList[1].getID(), {"name": "pikaqiu", "hp": 300}]));
+        let tx = iost.callABI("token721.iost", "issue", [tokenSym, accountList[0].getID(), '{"name": "pikaqiu", "hp": 300}']);
+        tx.addAction("token721.iost", "issue", JSON.stringify([tokenSym, accountList[1].getID(), '{"name": "pikaqiu", "hp": 300}']));
         account.signTx(tx);
 
         const handler = new IOST.TxHandler(tx, rpc);
