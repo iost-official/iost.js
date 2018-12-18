@@ -17,10 +17,11 @@ const defaultConfig = {
  */
 class IOST {
     constructor(config) {
-        if (config === undefined) {
-            this.config = defaultConfig
+        this.config = defaultConfig;
+        if (!config) {
+            return
         }
-        this.config = config;
+        Object.assign(this.config, config);
     }
 
     /**

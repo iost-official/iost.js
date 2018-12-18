@@ -5,11 +5,11 @@ class TxHandler {
         this.tx = tx;
         let self = this;
         this.Pending = function (response) {
-            console.log("Pending... tx: "+ response.hash + ", " + JSON.stringify(self.tx.actions));
+            console.log("Pending... tx: " + response.hash + ", " + JSON.stringify(self.tx.actions));
             self.status = "pending";
         };
         this.Success = function (response) {
-            console.log("Success... tx, receipt: "+ JSON.stringify(response));
+            console.log("Success... tx, receipt: " + JSON.stringify(response));
             self.status = "success";
         };
         this.Failed = function (res) {
@@ -25,7 +25,10 @@ class TxHandler {
         let self = this;
         this.Pending = function (res) {
             self.status = "pending";
-            c(res).catch(e => console.error("on pending failed. ", e));
+            let p = c(res);
+            if (typeof p === "object" && typeof p.catch === 'function') {
+                p.catch(e => console.error("on pending failed. ", e));
+            }
         };
         return this
     }
@@ -34,7 +37,10 @@ class TxHandler {
         let self = this;
         this.Success = function (res) {
             self.status = "success";
-            c(res).catch(e => console.error("on success failed. ", e));
+            let p = c(res);
+            if (typeof p === "object" && typeof p.catch === 'function') {
+                p.catch(e => console.error("on success failed. ", e));
+            }
         };
         return this
 
@@ -44,7 +50,10 @@ class TxHandler {
         let self = this;
         this.Failed = function (res) {
             self.status = "failed";
-            c(res).catch(e => console.error("on failed failed. ", e));
+            let p = c(res);
+            if (typeof p === "object" && typeof p.catch === 'function') {
+                p.catch(e => console.error("on failed failed. ", e));
+            }
         };
         return this
 
@@ -64,6 +73,7 @@ class TxHandler {
 
         let i = 1;
         let id = setInterval(function () { //
+
             if (self.status === "idle") {
                 return
             }
@@ -78,7 +88,7 @@ class TxHandler {
             self._rpc.transaction.getTxReceiptByTxHash(self._hash).then(function (res) {
                 if (res.status_code === "SUCCESS" && self.status === "pending") {
                     self.Success(res)
-                } else if (res.status_code !== undefined && self.status === "pending"){
+                } else if (res.status_code !== undefined && self.status === "pending") {
                     self.Failed(res)
                 }
             }).catch(function (e) {
