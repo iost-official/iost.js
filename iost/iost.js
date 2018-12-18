@@ -31,9 +31,9 @@ class IOST {
      * @returns {Tx}
      */
     callABI(contract, abi, args) {
-        const t = new Tx(this.config.gasRatio, this.config.gasLimit, this.config.delay);
+        const t = new Tx(this.config.gasRatio, this.config.gasLimit);
         t.addAction(contract, abi, JSON.stringify(args));
-        t.setTime(90, 0);
+        t.setTime(this.config.expiration, this.config.delay);
         return t
     }
 
@@ -60,11 +60,11 @@ class IOST {
      * @returns {Tx}
      */
     newAccount(name, creator, ownerkey, activekey, initialRAM, initialGasPledge) {
-        const t = new Tx(this.config.gasRatio, this.config.gasLimit, this.config.delay);
+        const t = new Tx(this.config.gasRatio, this.config.gasLimit);
         t.addAction("auth.iost", "SignUp", JSON.stringify([name, ownerkey, activekey]));
         t.addAction("ram.iost", "buy", JSON.stringify([creator, name, initialRAM]));
         t.addAction("gas.iost", "pledge", JSON.stringify([creator, name, initialGasPledge+""]));
-        t.setTime(90, 0);
+        t.setTime(this.config.expiration, this.config.delay);
         return t
     }
 }

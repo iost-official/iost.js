@@ -1,4 +1,3 @@
-
 class Account {
     constructor(id) {
         this._id = id;
