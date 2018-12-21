@@ -18,7 +18,7 @@ const rpc = new IOST.RPC(new IOST.HTTPProvider("http://localhost:30001"));
 rpc.blockchain.getChainInfo().then(console.log);
 
 // init iost sdk
-let iost = new IOST({ // will use default setting if not set
+let iost = new IOST.IOST({ // will use default setting if not set
     gasPrice: 100,
     gasLimit: 100000,
     delay:0,
@@ -40,6 +40,3 @@ handler
     .listen(); // if not listen, only onPending or onFailed (at sending tx) will be called
 ```
 ## APIs
-
-
-
