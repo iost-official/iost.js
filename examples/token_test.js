@@ -29,6 +29,7 @@ const iost = new IOST.IOST({ // will use default setting if not set
     gasLimit: 100000,
     delay:0,
     expiration: 90,
+    defaultLimit: "1000"
 });
 const rpc = new IOST.RPC(new IOST.HTTPProvider('http://127.0.0.1:30001'));
 

@@ -7,6 +7,7 @@ const defaultConfig = {
     gasLimit: 10000,
     delay: 0,
     expiration: 90,
+    defaultLimit: "unlimited"
 };
 
 /**
@@ -35,6 +36,7 @@ class IOST {
         const t = new Tx(this.config.gasRatio, this.config.gasLimit);
         t.addAction(contract, abi, JSON.stringify(args));
         t.setTime(this.config.expiration, this.config.delay);
+        t.addApprove("*", this.config.defaultLimit);
         return t
     }
 
@@ -48,7 +50,10 @@ class IOST {
      * @returns {Tx}
      */
     transfer(token, from, to, amount, memo = "") {
-        return this.callABI("token.iost", "transfer", [token, from, to, amount, memo])
+        let t = this.callABI("token.iost", "transfer", [token, from, to, amount, memo]);
+        t.addApprove("*", this.config.defaultLimit);
+        t.addApprove("iost", amount);
+        return t;
     }
 
     /**
@@ -67,6 +72,7 @@ class IOST {
         t.addAction("ram.iost", "buy", JSON.stringify([creator, name, initialRAM]));
         t.addAction("gas.iost", "pledge", JSON.stringify([creator, name, initialGasPledge+""]));
         t.setTime(this.config.expiration, this.config.delay);
+        t.addApprove("*", this.config.defaultLimit);
         return t
     }
 }
