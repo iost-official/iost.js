@@ -6,6 +6,7 @@ const {Tx} = require('./lib/structs');
 const Algorithm = require('./lib/crypto/algorithm');
 const Account = require('./iost/account');
 const TxHandler = require('./iost/tx_handler');
+const Util = require('./lib/util');
 
 module.exports = {
 	IOST: IOST,
@@ -16,4 +17,5 @@ module.exports = {
     Algorithm: Algorithm,
     Account: Account,
     TxHandler: TxHandler,
+    Util: Util,
 };
