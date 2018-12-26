@@ -8,13 +8,16 @@ const delay = function(s){
         setTimeout(resolve,s);
     });
 };
-const checkHandler = function (handler) {
+const checkHandler = function (handler, status) {
+    if (status === undefined || status === null) {
+        status = "success";
+    }
     return new Promise(function (resolve) {
         let i = 0, times = 10;
         let id = setInterval(function () {
             if (handler.status === "success" || handler.status === "failed" || i > parseInt(times)) {
                 clearInterval(id);
-                assert.equal(handler.status, "success");
+                assert.equal(handler.status, status);
                 resolve();
                 return;
             }
@@ -27,7 +30,6 @@ let contractID = "";
 // init iost sdk
 const iost = new IOST.IOST({ // will use default setting if not set
     gasRatio: 1,
-    gasLimit: 100000,
     delay:0,
     expiration: 90,
     defaultLimit: "unlimited"
@@ -47,8 +49,6 @@ const Failed = function (e) {
 const accountList = new Array(3);
 let userPrefix = Date.now().toString();
 userPrefix = "u" + userPrefix.substr(userPrefix.length - 8);
-let tokenSym = Date.now().toString();
-tokenSym = "t" + tokenSym.substr(tokenSym.length - 4);
 
 delay().then(function () {
 // create account
@@ -112,6 +112,22 @@ delay().then(function () {
     return checkHandler(handler);
 })
 .then(function () {
+    // require auth
+    const tx = iost.callABI("system.iost", "RequireAuth", [accountList[0].getID(), "undefined"]);
+    accountList[0].signTx(tx);
+
+    const handler = new IOST.TxHandler(tx, rpc);
+    handler
+        .onSuccess(function (response) {
+            console.log("Success... tx, receipt: " + JSON.stringify(response));
+            assert.equal(response.returns[0], "[true]");
+        })
+        .send()
+        .listen(1000, 10);
+
+    return checkHandler(handler);
+})
+.then(function () {
     // receipt
     const receipt = "receipt from sdk";
     const tx = iost.callABI("system.iost", "Receipt", [receipt]);
@@ -130,7 +146,7 @@ delay().then(function () {
 })
 .then(function () {
     // setcode
-    let helloContract = '{"ID":"hw","info":{"lang":"javascript","version":"1.0.0","abi":[{"name":"hello"}, {"name":"can_update"}]},"code":"class Contract {init(){} hello(){return \\"world\\";} can_update(){return true;}} module.exports = Contract;"}';
+    let helloContract = '{"ID":"hw","info":{"lang":"javascript","version":"1.0.0","abi":[{"name":"hello"}, {"name":"can_update", "args": ["string"]}]},"code":"class Contract {init(){} hello(){return \\"world\\";} can_update(data){return true;}} module.exports = Contract;"}';
     const tx = iost.callABI("system.iost", "SetCode", [helloContract]);
     account.signTx(tx);
 
@@ -147,7 +163,7 @@ delay().then(function () {
     return checkHandler(handler);
 })
 .then(function () {
-    // setcode
+    // call hello
     const tx = iost.callABI(contractID, "hello", []);
     account.signTx(tx);
 
@@ -164,7 +180,7 @@ delay().then(function () {
 })
 .then(function () {
     // update code
-    let helloContract = '{"ID":"' + contractID + '","info":{"lang":"javascript","version":"1.0.0","abi":[{"name":"hello", "args":["string"]}, {"name":"can_update", "args":["string"]}]},"code":"class Contract {init(){} hello(data){return data;} can_update(data){return true;}} module.exports = Contract;"}';
+    let helloContract = '{"ID":"' + contractID + '","info":{"lang":"javascript","version":"1.0.0","abi":[{"name":"hello", "args":["string"]}, {"name":"can_update", "args":["string"]}]},"code":"class Contract {init(){} hello(data){return data;} can_update(data){return false;}} module.exports = Contract;"}';
     const tx = iost.callABI("system.iost", "UpdateCode", [helloContract, ""]);
     account.signTx(tx);
 
@@ -179,7 +195,7 @@ delay().then(function () {
     return checkHandler(handler);
 })
 .then(function () {
-    // setcode
+    // call hello
     let data = "data" + Date.now().toString();
     const tx = iost.callABI(contractID, "hello", [data], "");
     account.signTx(tx);
@@ -194,6 +210,25 @@ delay().then(function () {
         .listen(1000, 10);
 
     return checkHandler(handler);
+})
+.then(function () {
+    // update code, shouldn't success
+    let helloContract = '{"ID":"' + contractID + '","info":{"lang":"javascript","version":"1.0.0","abi":[{"name":"hello", "args":["string"]}]},"code":"class Contract {init(){} hello(data){return data;}} module.exports = Contract;"}';
+    const tx = iost.callABI("system.iost", "UpdateCode", [helloContract, ""]);
+    account.signTx(tx);
+
+    const handler = new IOST.TxHandler(tx, rpc);
+    handler
+        .onSuccess(function (response) {
+            console.log("Success... tx, receipt: " + JSON.stringify(response));
+        })
+        .onFailed(function (response) {
+            console.log("Expected failed...: " + JSON.stringify(response));
+        })
+        .send()
+        .listen(1000, 10);
+
+    return checkHandler(handler, "failed");
 })
 .catch(Failed)
 ;

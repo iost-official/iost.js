@@ -76,7 +76,9 @@ class TxHandler {
         self._rpc.transaction.sendTx(self.tx).then(function (res) {
             self._hash = res.hash;
             self.Pending(res)
-        }).catch(self.Failed);
+        }).catch(e => {
+            self.Failed("send tx failed. " + e);
+        });
         return self
     }
 

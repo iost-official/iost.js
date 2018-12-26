@@ -1,0 +1,190 @@
+{
+    "lang": "javascript",
+    "version": "1.0.0",
+    "abi": [
+        {
+            "name": "put",
+            "args": [
+                "string",
+                "string"
+            ],
+            "amountLimit": []
+        },
+        {
+            "name": "has",
+            "args": [
+                "string"
+            ],
+            "amountLimit": []
+        },
+        {
+            "name": "get",
+            "args": [
+                "string"
+            ],
+            "amountLimit": []
+        },
+        {
+            "name": "delete",
+            "args": [
+                "string"
+            ],
+            "amountLimit": []
+        },
+        {
+            "name": "mset",
+            "args": [
+                "string",
+                "string",
+                "string"
+            ],
+            "amountLimit": []
+        },
+        {
+            "name": "mget",
+            "args": [
+                "string",
+                "string"
+            ],
+            "amountLimit": []
+        },
+        {
+            "name": "mhas",
+            "args": [
+                "string",
+                "string"
+            ],
+            "amountLimit": []
+        },
+        {
+            "name": "mkeys",
+            "args": [
+                "string"
+            ],
+            "amountLimit": []
+        },
+        {
+            "name": "mlen",
+            "args": [
+                "string"
+            ],
+            "amountLimit": []
+        },
+        {
+            "name": "mdelete",
+            "args": [
+                "string",
+                "string"
+            ],
+            "amountLimit": []
+        },
+        {
+            "name": "ghas",
+            "args": [
+                "string",
+                "string"
+            ],
+            "amountLimit": []
+        },
+        {
+            "name": "gget",
+            "args": [
+                "string",
+                "string"
+            ],
+            "amountLimit": []
+        },
+        {
+            "name": "gmget",
+            "args": [
+                "string",
+                "string",
+                "string"
+            ],
+            "amountLimit": []
+        },
+        {
+            "name": "gmhas",
+            "args": [
+                "string",
+                "string",
+                "string"
+            ],
+            "amountLimit": []
+        },
+        {
+            "name": "gmkeys",
+            "args": [
+                "string",
+                "string"
+            ],
+            "amountLimit": []
+        },
+        {
+            "name": "gmlen",
+            "args": [
+                "string",
+                "string"
+            ],
+            "amountLimit": []
+        },
+        {
+            "name": "deposit",
+            "args": [
+                "string",
+                "string"
+            ],
+            "amountLimit": [{"token":"*", "val":"unlimited"}]
+        },
+        {
+            "name": "withdraw",
+            "args": [
+                "string",
+                "string"
+            ],
+            "amountLimit": [{"token":"*", "val":"unlimited"}]
+        },
+        {
+            "name": "blockInfo",
+            "args": [],
+            "amountLimit": []
+        },
+        {
+            "name": "block",
+            "args": [],
+            "amountLimit": []
+        },
+        {
+            "name": "tx",
+            "args": [],
+            "amountLimit": []
+        },
+        {
+            "name": "txInfo",
+            "args": [],
+            "amountLimit": []
+        },
+        {
+            "name": "contextInfo",
+            "args": [],
+            "amountLimit": []
+        },
+        {
+            "name": "contractName",
+            "args": [],
+            "amountLimit": []
+        },
+        {
+            "name": "publisher",
+            "args": [],
+            "amountLimit": []
+        },
+        {
+            "name": "receipt",
+            "args": [
+                "string"
+            ],
+            "amountLimit": []
+        }
+    ]
+}

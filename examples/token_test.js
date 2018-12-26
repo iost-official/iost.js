@@ -26,7 +26,7 @@ const checkHandler = function (handler) {
 // init iost sdk
 const iost = new IOST.IOST({ // will use default setting if not set
     gasRatio: 1,
-    gasLimit: 100000,
+    gasLimit: 10000000,
     delay:0,
     expiration: 90,
     defaultLimit: "1000"
@@ -70,9 +70,9 @@ delay().then(function () {
                 accountList[i].addKeyPair(kp, "owner");
                 accountList[i].addKeyPair(kp, "active");
             })
-            .send().listen(1000, 5)
+            .send().listen(1000, 10)
     }
-    return delay(5000);
+    return delay(10000);
 })
 .then(function () {
     for (let i = 0; i < accountList.length; i++) {

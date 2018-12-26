@@ -26,7 +26,7 @@ const checkHandler = function (handler) {
 // init iost sdk
 const iost = new IOST.IOST({ // will use default setting if not set
     gasRatio: 1,
-    gasLimit: 100000,
+    gasLimit: 10000000,
     delay:0,
     expiration: 90,
     defaultLimit: "1000"
