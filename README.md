@@ -20,7 +20,7 @@ rpc.blockchain.getChainInfo().then(console.log);
 // init iost sdk
 let iost = new IOST({ // will use default setting if not set
     gasPrice: 100,
-    gasLimit: 100000,
+    gasLimit: 2000000,
     delay:0,
 }, new IOST.HTTPProvider('http://localhost:30001'));
 
