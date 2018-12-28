@@ -18,3 +18,5 @@ rpc.transaction.getTxReceiptByTxHash("abc").then(function(res) {
     console.log("GetTxReceiptByTxHash result: " + JSON.stringify(res, null, '\t'))
 });
 
+console.log(rpc.blockchain.getGasUsage("transfer"));
+console.log(rpc.blockchain.getGasUsage("newAccount"));
