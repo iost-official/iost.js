@@ -26,8 +26,7 @@ const checkHandler = function (handler, status) {
         }, 1000);
     });
 };
-let contractID = "";
-let tokenSym = "iost";
+let contractID = "ContractZGVqhY3c65xRs8aoC4dUdACVCKSwhMMsg2negSFxpr3";
 let testDataPath = "/home/wangyu/gocode/src/github.com/iost-official/go-iost/contract/";
 
 // init iost sdk
@@ -37,7 +36,7 @@ const iost = new IOST.IOST({ // will use default setting if not set
     expiration: 90,
     defaultLimit: "unlimited"
 });
-const rpc = new IOST.RPC(new IOST.HTTPProvider('http://127.0.0.1:30001'));
+const rpc = new IOST.RPC(new IOST.HTTPProvider('http://47.244.109.92:30001'));
 
 // init admin account
 const account = new IOST.Account("admin");
@@ -99,7 +98,7 @@ delay().then(function () {
     handler
         .onSuccess(function (response) {
             console.log("Success... tx, receipt: " + JSON.stringify(response));
-            contractID = JSON.parse(response.returns[0])[0];
+            //contractID = JSON.parse(response.returns[0])[0];
             console.log("Contract ID = " + contractID)
         })
         .send()
@@ -113,7 +112,7 @@ delay().then(function () {
         let ob0 = await rpc.blockchain.getBalance(accountList[0].getID(), "iost");
 
         // transfer to an exists account
-        const tx = iost.callABI(contractID, "transfer", ["iost", account.getID(), accountList[0].getID(), "1000.1", ""]);
+        const tx = iost.callABI(contractID, "transfer", ["iost", accountList[0].getID(), "1000.1", ""]);
         tx.addApprove("iost", "1000.1");
         account.signTx(tx);
 
@@ -123,8 +122,8 @@ delay().then(function () {
                 console.log("Success... tx, receipt: "+ JSON.stringify(response));
                 let nbAdmin = await rpc.blockchain.getBalance("admin", "iost");
                 let nb0 = await rpc.blockchain.getBalance(accountList[0].getID(), "iost");
-                assert.equal(nbAdmin.balance, new Number(obAdmin.balance - 1000.1).toFixed(2));
-                assert.equal(nb0.balance, new Number(ob0.balance + 1000.1).toFixed(2));
+                assert.equal(nbAdmin.balance, new Number(obAdmin.balance - 1000.1).toFixed(8));
+                assert.equal(nb0.balance, new Number(ob0.balance + 1000.1).toFixed(8));
             })
             .send()
             .listen(1000, 8);
@@ -140,7 +139,7 @@ delay().then(function () {
         let obAdmin = await rpc.blockchain.getBalance("admin", "iost");
         let obNew = 0;
         // create account and transfer
-        const tx = iost.callABI(contractID, "transfer", ["iost", account.getID(), "", "200", userPrefix + "na:" + kp1.id + ":" + kp1.id]);
+        const tx = iost.callABI(contractID, "transfer", ["iost", "", "200", "create:" + userPrefix + "na:" + kp1.id + ":" + kp1.id]);
         tx.addApprove("iost", "200");
         account.signTx(tx);
 
@@ -150,8 +149,8 @@ delay().then(function () {
                 console.log("Success... tx, receipt: " + JSON.stringify(response));
                 let nbAdmin = await rpc.blockchain.getBalance("admin", "iost");
                 let nbNew = await rpc.blockchain.getBalance(userPrefix + "na", "iost");
-                assert.equal(nbAdmin.balance, new Number(obAdmin.balance - 200).toFixed(2));
-                assert(true, nbNew.balance < 200);
+                assert.equal(nbAdmin.balance, new Number(obAdmin.balance - 200).toFixed(8));
+                assert(true, nbNew.balance < 200 - 10);
             })
             .send()
             .listen(1000, 10);
@@ -169,7 +168,7 @@ delay().then(function () {
         let ob1 = await rpc.blockchain.getBalance(accountList[1].getID(), "iost");
 
         // use new account
-        const tx = iost.callABI(contractID, "transfer", ["iost", userPrefix + "na", accountList[1].getID(), "100", ""]);
+        const tx = iost.callABI(contractID, "transfer", ["iost", accountList[1].getID(), "100", ""]);
         tx.addApprove("iost", "100");
         tx.gasLimit = 500000;
 
@@ -185,8 +184,8 @@ delay().then(function () {
                 console.log("Success... tx, receipt: " + JSON.stringify(response));
                 let nbNew = await rpc.blockchain.getBalance(userPrefix + "na", "iost");
                 let nb1 = await rpc.blockchain.getBalance(accountList[1].getID(), "iost");
-                assert.equal(nbNew.balance, new Number(obNew.balance - 100).toFixed(2));
-                assert.equal(nb1.balance, new Number(ob1.balance + 100).toFixed(2));
+                assert.equal(nbNew.balance, new Number(obNew.balance - 100).toFixed(8));
+                assert.equal(nb1.balance, new Number(ob1.balance + 100).toFixed(8));
             })
             .send()
             .listen(1000, 10);
