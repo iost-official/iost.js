@@ -48,11 +48,12 @@ let userPrefix = Date.now().toString();
 userPrefix = "u" + userPrefix.substr(userPrefix.length - 8);
 let tokenSym = Date.now().toString();
 tokenSym = "t" + tokenSym.substr(tokenSym.length - 4);
+let myid = userPrefix + "my";
 
 delay().then(function () {
     const kp = KeyPair.newKeyPair();
     const tx = iost.newAccount(
-            "myidid",
+            myid,
             "admin",
             kp.id,
             kp.id,
@@ -64,22 +65,22 @@ delay().then(function () {
     handler
         .onSuccess(function (response) {
             console.log("Success... tx, receipt: "+ JSON.stringify(response));
-            accountList[0] = new IOST.Account("myidid");
+            accountList[0] = new IOST.Account(myid);
             accountList[0].addKeyPair(kp, "owner");
             accountList[0].addKeyPair(kp, "active");
         })
         .send()
         .listen(1000, 5);
-    return delay(10000);
+    return checkHandler(handler);
 })
 .then(function () {
-    const tx = iost.callABI("auth.iost", "AddPermission", ["myidid", "perm1", 1]);
+    const tx = iost.callABI("auth.iost", "addPermission", [myid, "perm1", 1]);
     accountList[0].signTx(tx);
     const handler = new IOST.TxHandler(tx, rpc);
     handler
         .onSuccess(async function (response) {
             console.log("Success... tx, receipt: "+ JSON.stringify(response));
-            let accountInfo = await rpc.blockchain.getAccountInfo("myidid", false);
+            let accountInfo = await rpc.blockchain.getAccountInfo(myid, false);
             console.log(JSON.stringify(accountInfo), typeof(accountInfo))
             assert.notEqual(JSON.stringify(accountInfo).indexOf(`"perm1":{"name":"perm1","groups":[],"items":[],"threshold":"1"}}`), -1)
         })
@@ -88,13 +89,13 @@ delay().then(function () {
     return checkHandler(handler)
 })
 .then(function () {
-    const tx = iost.callABI("auth.iost", "DropPermission", ["myidid", "perm1"]);
+    const tx = iost.callABI("auth.iost", "dropPermission", [myid, "perm1"]);
     accountList[0].signTx(tx);
     const handler = new IOST.TxHandler(tx, rpc);
     handler
         .onSuccess(async function (response) {
             console.log("Success... tx, receipt: "+ JSON.stringify(response));
-            let accountInfo = await rpc.blockchain.getAccountInfo("myidid", false);
+            let accountInfo = await rpc.blockchain.getAccountInfo(myid, false);
             assert.equal(JSON.stringify(accountInfo).indexOf(`"perm1":{"name":"perm1","groups":[],"items":[],"threshold":"1"}}`), -1)
         })
         .send()
@@ -102,13 +103,13 @@ delay().then(function () {
     return checkHandler(handler)
 })
 .then(function () {
-    const tx = iost.callABI("auth.iost", "AssignPermission", ["myidid", "active", "IOST1234", 1]);
+    const tx = iost.callABI("auth.iost", "assignPermission", [myid, "active", "IOST1234", 1]);
     accountList[0].signTx(tx);
     const handler = new IOST.TxHandler(tx, rpc);
     handler
         .onSuccess(async function (response) {
             console.log("Success... tx, receipt: "+ JSON.stringify(response));
-            let accountInfo = await rpc.blockchain.getAccountInfo("myidid", false);
+            let accountInfo = await rpc.blockchain.getAccountInfo(myid, false);
             assert.notEqual(JSON.stringify(accountInfo).indexOf(`{"id":"IOST1234","is_key_pair":true,"weight":"1","permission":""}`), -1)
         })
         .send()
@@ -116,13 +117,13 @@ delay().then(function () {
     return checkHandler(handler)
 })
 .then(function () {
-    const tx = iost.callABI("auth.iost", "RevokePermission", ["myidid", "active", "IOST1234"]);
+    const tx = iost.callABI("auth.iost", "revokePermission", [myid, "active", "IOST1234"]);
     accountList[0].signTx(tx);
     const handler = new IOST.TxHandler(tx, rpc);
     handler
         .onSuccess(async function (response) {
             console.log("Success... tx, receipt: "+ JSON.stringify(response));
-            let accountInfo = await rpc.blockchain.getAccountInfo("myidid", false);
+            let accountInfo = await rpc.blockchain.getAccountInfo(myid, false);
             assert.equal(JSON.stringify(accountInfo).indexOf(`{"id":"IOST1234","is_key_pair":true,"weight":"1","permission":""}`), -1)
         })
         .send()
@@ -130,13 +131,13 @@ delay().then(function () {
     return checkHandler(handler)
 })
 .then(function () {
-    const tx = iost.callABI("auth.iost", "AddGroup", ["myidid", "grp0"]);
+    const tx = iost.callABI("auth.iost", "addGroup", [myid, "grp0"]);
     accountList[0].signTx(tx);
     const handler = new IOST.TxHandler(tx, rpc);
     handler
         .onSuccess(async function (response) {
             console.log("Success... tx, receipt: "+ JSON.stringify(response));
-            let accountInfo = await rpc.blockchain.getAccountInfo("myidid", false);
+            let accountInfo = await rpc.blockchain.getAccountInfo(myid, false);
             assert.notEqual(JSON.stringify(accountInfo).indexOf(`"groups":{"grp0":{"name":"grp0","items":[]}}`), -1)
         })
         .send()
@@ -144,13 +145,13 @@ delay().then(function () {
     return checkHandler(handler)
 })
 .then(function () {
-    const tx = iost.callABI("auth.iost", "AssignGroup", ["myidid", "grp0", "acc1@active", 1]);
+    const tx = iost.callABI("auth.iost", "assignGroup", [myid, "grp0", "acc1@active", 1]);
     accountList[0].signTx(tx);
     const handler = new IOST.TxHandler(tx, rpc);
     handler
         .onSuccess(async function (response) {
             console.log("Success... tx, receipt: "+ JSON.stringify(response));
-            let accountInfo = await rpc.blockchain.getAccountInfo("myidid", false);
+            let accountInfo = await rpc.blockchain.getAccountInfo(myid, false);
             assert.notEqual(JSON.stringify(accountInfo).indexOf(`{"grp0":{"name":"grp0","items":[{"id":"acc1","is_key_pair":false,"weight":"1","permission":"@active"}]}`), -1)
         })
         .send()
@@ -158,13 +159,13 @@ delay().then(function () {
     return checkHandler(handler)
 })
 .then(function () {
-    const tx = iost.callABI("auth.iost", "RevokeGroup", ["myidid", "grp0", "acc1"]);
+    const tx = iost.callABI("auth.iost", "revokeGroup", [myid, "grp0", "acc1"]);
     accountList[0].signTx(tx);
     const handler = new IOST.TxHandler(tx, rpc);
     handler
         .onSuccess(async function (response) {
             console.log("Success... tx, receipt: "+ JSON.stringify(response));
-            let accountInfo = await rpc.blockchain.getAccountInfo("myidid", false);
+            let accountInfo = await rpc.blockchain.getAccountInfo(myid, false);
             assert.equal(JSON.stringify(accountInfo).indexOf(`{"grp0":{"name":"grp0","items":[{"id":"acc1","is_key_pair":false,"weight":"1","permission":"@active"}]}`), -1)
         })
         .send()
@@ -172,13 +173,13 @@ delay().then(function () {
     return checkHandler(handler)
 })
 .then(function () {
-    const tx = iost.callABI("auth.iost", "AssignPermissionToGroup", ["myidid", "active", "grp0"]);
+    const tx = iost.callABI("auth.iost", "assignPermissionToGroup", [myid, "active", "grp0"]);
     accountList[0].signTx(tx);
     const handler = new IOST.TxHandler(tx, rpc);
     handler
         .onSuccess(async function (response) {
             console.log("Success... tx, receipt: "+ JSON.stringify(response));
-            let accountInfo = await rpc.blockchain.getAccountInfo("myidid", false);
+            let accountInfo = await rpc.blockchain.getAccountInfo(myid, false);
             assert.notEqual(JSON.stringify(accountInfo).indexOf(`"groups":["grp0"]`), -1)
         })
         .send()
@@ -186,13 +187,13 @@ delay().then(function () {
     return checkHandler(handler)
 })
 .then(function () {
-    const tx = iost.callABI("auth.iost", "RevokePermissionInGroup", ["myidid", "active", "grp0"]);
+    const tx = iost.callABI("auth.iost", "revokePermissionInGroup", [myid, "active", "grp0"]);
     accountList[0].signTx(tx);
     const handler = new IOST.TxHandler(tx, rpc);
     handler
         .onSuccess(async function (response) {
             console.log("Success... tx, receipt: "+ JSON.stringify(response));
-            let accountInfo = await rpc.blockchain.getAccountInfo("myidid", false);
+            let accountInfo = await rpc.blockchain.getAccountInfo(myid, false);
             assert.equal(JSON.stringify(accountInfo).indexOf(`"groups":["grp0"]`), -1)
         })
         .send()
@@ -200,13 +201,13 @@ delay().then(function () {
     return checkHandler(handler)
 })
 .then(function () {
-    const tx = iost.callABI("auth.iost", "DropGroup", ["myidid", "grp0"]);
+    const tx = iost.callABI("auth.iost", "dropGroup", [myid, "grp0"]);
     accountList[0].signTx(tx);
     const handler = new IOST.TxHandler(tx, rpc);
     handler
         .onSuccess(async function (response) {
             console.log("Success... tx, receipt: "+ JSON.stringify(response));
-            let accountInfo = await rpc.blockchain.getAccountInfo("myidid", false);
+            let accountInfo = await rpc.blockchain.getAccountInfo(myid, false);
             assert.equal(JSON.stringify(accountInfo).indexOf(`"groups":{"grp0":{"name":"grp0","items":[]}}`), -1)
         })
         .send()

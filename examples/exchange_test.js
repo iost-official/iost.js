@@ -91,7 +91,7 @@ delay().then(function () {
     let vmContract = {"ID":"", "info":abi, "code":code};
 
     // require auth
-    const tx = iost.callABI("system.iost", "SetCode", [JSON.stringify(vmContract)]);
+    const tx = iost.callABI("system.iost", "setCode", [JSON.stringify(vmContract)]);
     accountList[0].signTx(tx);
 
     const handler = new IOST.TxHandler(tx, rpc);

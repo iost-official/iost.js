@@ -68,7 +68,7 @@ class IOST {
      */
     newAccount(name, creator, ownerkey, activekey, initialRAM, initialGasPledge) {
         const t = new Tx(this.config.gasRatio, this.config.gasLimit);
-        t.addAction("auth.iost", "SignUp", JSON.stringify([name, ownerkey, activekey]));
+        t.addAction("auth.iost", "signUp", JSON.stringify([name, ownerkey, activekey]));
         t.addAction("ram.iost", "buy", JSON.stringify([creator, name, initialRAM]));
         t.addAction("gas.iost", "pledge", JSON.stringify([creator, name, initialGasPledge+""]));
         t.setTime(this.config.expiration, this.config.delay);

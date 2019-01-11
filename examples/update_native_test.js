@@ -85,7 +85,7 @@ delay().then(function () {
 })
 .then(function () {
     // set domain to 0.0.0
-    const tx = iost.callABI("system.iost", "UpdateNativeCode", ["domain.iost", "0.0.0", ""]);
+    const tx = iost.callABI("system.iost", "updateNativeCode", ["domain.iost", "0.0.0", ""]);
     account.signTx(tx);
 
     const handler = new IOST.TxHandler(tx, rpc);
@@ -120,7 +120,7 @@ delay().then(function () {
 })
 .then(function () {
     // update domain without permission
-    const tx = iost.callABI("system.iost", "UpdateNativeCode", ["domain.iost", "1.0.0", ""]);
+    const tx = iost.callABI("system.iost", "updateNativeCode", ["domain.iost", "1.0.0", ""]);
     accountList[0].signTx(tx);
 
     const handler = new IOST.TxHandler(tx, rpc);
@@ -146,12 +146,12 @@ delay().then(function () {
             "version": "1.0.0",
             "abi": [
                 {"name": "can_update", "args": ["string"], "amountLimit": []},
-                {"name": "Link", "args": ["string", "string"], "amounLimit": []}
+                {"name": "link", "args": ["string", "string"], "amounLimit": []}
             ]
         },
         "code": ""
     };
-    const tx = iost.callABI("system.iost", "UpdateNativeCode", ["domain.iost", "", JSON.stringify(con)]);
+    const tx = iost.callABI("system.iost", "updateNativeCode", ["domain.iost", "", JSON.stringify(con)]);
     account.signTx(tx);
 
     const handler = new IOST.TxHandler(tx, rpc);
@@ -167,7 +167,7 @@ delay().then(function () {
 .then(function() {
     // link domain
     url = "hello.me" + Date.now().toString().substr(8);
-    const tx = iost.callABI("domain.iost", "Link", [url, contractID]);
+    const tx = iost.callABI("domain.iost", "link", [url, contractID]);
     account.signTx(tx);
 
     const handler = new IOST.TxHandler(tx, rpc);
@@ -182,7 +182,7 @@ delay().then(function () {
 })
 .then(function() {
     // can't transfer domain
-    const tx = iost.callABI("domain.iost", "Transfer", [url, contractID]);
+    const tx = iost.callABI("domain.iost", "transfer", [url, contractID]);
     account.signTx(tx);
 
     const handler = new IOST.TxHandler(tx, rpc);
@@ -192,7 +192,7 @@ delay().then(function () {
         })
         .onFailed(function (response) {
             console.log("Expected failed... : " + JSON.stringify(response));
-            assert.equal(response.message.includes("abi Transfer not found"), true);
+            assert.equal(response.message.includes("abi transfer not found"), true);
         })
         .send()
         .listen(1000, 10);
@@ -201,7 +201,7 @@ delay().then(function () {
 })
 .then(function () {
     // update domain
-    const tx = iost.callABI("system.iost", "UpdateNativeCode", ["domain.iost", "1.0.0", ""]);
+    const tx = iost.callABI("system.iost", "updateNativeCode", ["domain.iost", "1.0.0", ""]);
     account.signTx(tx);
 
     const handler = new IOST.TxHandler(tx, rpc);
@@ -217,7 +217,7 @@ delay().then(function () {
 .then(function () {
     // setcode
     let helloContract = '{"ID":"hw","info":{"lang":"javascript","version":"1.0.0","abi":[{"name":"hello"}, {"name":"can_update"}]},"code":"class Contract {init(){} hello(){return \\"world\\";} can_update(){return true;}} module.exports = Contract;"}';
-    const tx = iost.callABI("system.iost", "SetCode", [helloContract]);
+    const tx = iost.callABI("system.iost", "setCode", [helloContract]);
     account.signTx(tx);
 
     const handler = new IOST.TxHandler(tx, rpc);
@@ -235,7 +235,7 @@ delay().then(function () {
 .then(function () {
     // link domain
     url = "hello.me" + Date.now().toString().substr(8);
-    const tx = iost.callABI("domain.iost", "Link", [url, contractID]);
+    const tx = iost.callABI("domain.iost", "link", [url, contractID]);
     account.signTx(tx);
 
     const handler = new IOST.TxHandler(tx, rpc);
@@ -266,7 +266,7 @@ delay().then(function () {
 })
 .then(function () {
     // transfer url
-    const tx = iost.callABI("domain.iost", "Transfer", [url, accountList[0].getID()]);
+    const tx = iost.callABI("domain.iost", "transfer", [url, accountList[0].getID()]);
     account.signTx(tx);
 
     const handler = new IOST.TxHandler(tx, rpc);

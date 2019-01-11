@@ -84,7 +84,7 @@ delay().then(function () {
     }
     // update code
     let helloContract = '{"ID":"' + cname + '","info":{"lang":"javascript","version":"1.0.0","abi":[{"name":"hello"}]},"code":"class Contract {init(){} hello(){return \\"world\\";}} module.exports = Contract;"}';
-    const tx = iost.callABI("system.iost", "UpdateCode", [helloContract, ""]);
+    const tx = iost.callABI("system.iost", "updateCode", [helloContract, ""]);
     accountList[0].signTx(tx);
 
     const handler = new IOST.TxHandler(tx, rpc);
@@ -103,7 +103,7 @@ delay().then(function () {
 .then(function () {
     // update code
     let helloContract = '{"ID":"' + cname + '","info":{"lang":"javascript","version":"1.0.0","abi":[{"name":"hello"}]},"code":"class Contract {init(){} hello(){return \\"world\\";}} module.exports = Contract;"}';
-    const tx = iost.callABI("system.iost", "UpdateCode", [helloContract, ""]);
+    const tx = iost.callABI("system.iost", "updateCode", [helloContract, ""]);
     account.signTx(tx);
 
     const handler = new IOST.TxHandler(tx, rpc);
