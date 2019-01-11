@@ -81,7 +81,7 @@ delay().then(function () {
 .then(function () {
     // setcode
     let helloContract = '{"ID":"hw","info":{"lang":"javascript","version":"1.0.0","abi":[{"name":"hello"}, {"name":"can_update"}]},"code":"class Contract {init(){} hello(){return \\"world\\";} can_update(){return true;}} module.exports = Contract;"}';
-    const tx = iost.callABI("system.iost", "SetCode", [helloContract]);
+    const tx = iost.callABI("system.iost", "setCode", [helloContract]);
     account.signTx(tx);
 
     const handler = new IOST.TxHandler(tx, rpc);
@@ -99,7 +99,7 @@ delay().then(function () {
 .then(function () {
     // transfer domain without owner
     url = "hello.me" + Date.now().toString().substr(8);
-    const tx = iost.callABI("domain.iost", "Transfer", [url, account.getID()]);
+    const tx = iost.callABI("domain.iost", "transfer", [url, account.getID()]);
     account.signTx(tx);
 
     const handler = new IOST.TxHandler(tx, rpc);
@@ -118,7 +118,7 @@ delay().then(function () {
 .then(function () {
     // link domain wrong format
     url = Date.now().toString().substr(8);
-    const tx = iost.callABI("domain.iost", "Link", [url, contractID]);
+    const tx = iost.callABI("domain.iost", "link", [url, contractID]);
     account.signTx(tx);
 
     const handler = new IOST.TxHandler(tx, rpc);
@@ -137,7 +137,7 @@ delay().then(function () {
 .then(function () {
     // link domain
     url = "hello.me" + Date.now().toString().substr(8);
-    const tx = iost.callABI("domain.iost", "Link", [url, contractID]);
+    const tx = iost.callABI("domain.iost", "link", [url, contractID]);
     account.signTx(tx);
 
     const handler = new IOST.TxHandler(tx, rpc);
@@ -168,7 +168,7 @@ delay().then(function () {
 })
 .then(function () {
     // transfer url without permission
-    const tx = iost.callABI("domain.iost", "Transfer", [url, accountList[0].getID()]);
+    const tx = iost.callABI("domain.iost", "transfer", [url, accountList[0].getID()]);
     accountList[0].signTx(tx);
 
     const handler = new IOST.TxHandler(tx, rpc);
@@ -186,7 +186,7 @@ delay().then(function () {
 })
 .then(function () {
     // transfer url
-    const tx = iost.callABI("domain.iost", "Transfer", [url, accountList[0].getID()]);
+    const tx = iost.callABI("domain.iost", "transfer", [url, accountList[0].getID()]);
     account.signTx(tx);
 
     const handler = new IOST.TxHandler(tx, rpc);
@@ -201,7 +201,7 @@ delay().then(function () {
 })
 .then(function () {
     // transfer url to self
-    const tx = iost.callABI("domain.iost", "Transfer", [url, accountList[0].getID()]);
+    const tx = iost.callABI("domain.iost", "transfer", [url, accountList[0].getID()]);
     accountList[0].signTx(tx);
 
     const handler = new IOST.TxHandler(tx, rpc);
@@ -217,7 +217,7 @@ delay().then(function () {
 .then(function () {
     // setcode
     let helloContract = '{"ID":"hw","info":{"lang":"javascript","version":"1.0.0","abi":[{"name":"hello1", "args":["string"]}, {"name":"can_update"}]},"code":"class Contract {init(){} hello1(data){return data;} can_update(){return true;}} module.exports = Contract;"}';
-    const tx = iost.callABI("system.iost", "SetCode", [helloContract]);
+    const tx = iost.callABI("system.iost", "setCode", [helloContract]);
     accountList[0].signTx(tx);
 
     const handler = new IOST.TxHandler(tx, rpc);
@@ -234,7 +234,7 @@ delay().then(function () {
 })
 .then(function () {
     // link domain to another contract
-    const tx = iost.callABI("domain.iost", "Link", [url, contractID]);
+    const tx = iost.callABI("domain.iost", "link", [url, contractID]);
     accountList[0].signTx(tx);
 
     const handler = new IOST.TxHandler(tx, rpc);
@@ -265,7 +265,7 @@ delay().then(function () {
 })
 .then(function () {
     // link domain, can't link without owner permission
-    const tx = iost.callABI("domain.iost", "Link", [url, contractID]);
+    const tx = iost.callABI("domain.iost", "link", [url, contractID]);
     account.signTx(tx);
 
     const handler = new IOST.TxHandler(tx, rpc);
