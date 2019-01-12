@@ -145,7 +145,7 @@ delay().then(function () {
     handler
         .onSuccess(async function (response) {
             console.log("Success... tx, receipt: "+ JSON.stringify(response));
-            // let accountInfo = await rpc.blockchain.getAccountInfo("producer01", false);
+            let accountInfo = await rpc.blockchain.getContractStorage("vote_producer.iost","producerTable",accountList[0].getID());
             // console.log(JSON.stringify(accountInfo), typeof(accountInfo))
             // assert.notEqual(JSON.stringify(accountInfo).indexOf(`"vote":{"name":"vote","groups":[],"items":[],"threshold":"1"}}`), -1)
         })
