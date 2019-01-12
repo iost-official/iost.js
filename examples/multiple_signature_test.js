@@ -52,8 +52,7 @@ const Failed = function (e) {
 const accountList = new Array(3);
 let userPrefix = Date.now().toString();
 userPrefix = "u" + userPrefix.substr(userPrefix.length - 6);
-let tokenSym = Date.now().toString();
-tokenSym = "iost";
+let tokenSym = "iost";
 let myid0 = userPrefix + "my0";
 console.log("myid0:"+myid0);
 delay().then(function () {
@@ -137,22 +136,59 @@ delay().then(function () {
     return checkHandler(handler)
 })
 .then(function () {
-    const tx = iost.callABI("vote_producer.iost", "applyRegister", [accountList[0].getID(), "Hr71Fv6KkVYfe7kji28wfkMBXNUeaVh6YKCrrZiQLGU", "",userPrefix,""]);
+    const tx = iost.callABI("vote_producer.iost", "applyRegister", [accountList[0].getID(), userPrefix, "",userPrefix,"",true]);
     tx.addSigner(accountList[0].getID(), "vote");
     accountList[0].sign(tx, "vote");
-    admin.signTx(tx);
+    accountList[1].signTx(tx);
     const handler = new IOST.TxHandler(tx, rpc);
     handler
         .onSuccess(async function (response) {
             console.log("Success... tx, receipt: "+ JSON.stringify(response));
             let accountInfo = await rpc.blockchain.getContractStorage("vote_producer.iost","producerTable",accountList[0].getID());
-            // console.log(JSON.stringify(accountInfo), typeof(accountInfo))
-            // assert.notEqual(JSON.stringify(accountInfo).indexOf(`"vote":{"name":"vote","groups":[],"items":[],"threshold":"1"}}`), -1)
+            console.log(JSON.stringify(accountInfo), typeof(accountInfo))
+            let res = `"data":"{\\"pubkey\\":\\"`+userPrefix+`\\",\\"loc\\":\\"\\",\\"url\\":\\"`+userPrefix+`\\",\\"netId\\":\\"\\",\\"isProducer\\":true,\\"status\\":0,\\"online\\":false}`
+            assert.notEqual(JSON.stringify(accountInfo).indexOf(res), -1)
         })
         .send()
         .listen(1000, 10);
     return checkHandler(handler)
 })
+.then(function () {
+    const tx = iost.callABI("vote_producer.iost", "updateProducer", [accountList[0].getID(), userPrefix+"1", "",userPrefix,""]);
+    tx.addSigner(accountList[0].getID(), "vote");
+    accountList[0].sign(tx, "vote");
+    accountList[1].signTx(tx);
+    const handler = new IOST.TxHandler(tx, rpc);
+    handler
+        .onSuccess(async function (response) {
+            console.log("Success... tx, receipt: "+ JSON.stringify(response));
+            let accountInfo = await rpc.blockchain.getContractStorage("vote_producer.iost","producerTable",accountList[0].getID());
+            console.log(JSON.stringify(accountInfo), typeof(accountInfo))
+            let res = `"data":"{\\"pubkey\\":\\"`+userPrefix+"1"+`\\",\\"loc\\":\\"\\",\\"url\\":\\"`+userPrefix+`\\",\\"netId\\":\\"\\",\\"isProducer\\":true,\\"status\\":0,\\"online\\":false}`
+            assert.notEqual(JSON.stringify(accountInfo).indexOf(res), -1)
+        })
+        .send()
+        .listen(1000, 10);
+    return checkHandler(handler)
+})
+.then(function () {
+    const tx = iost.callABI("vote_producer.iost", "applyUnregister", [accountList[0].getID()]);
+    tx.addSigner(accountList[0].getID(), "vote");
+    accountList[0].sign(tx, "vote");
+    accountList[1].signTx(tx);
+    const handler = new IOST.TxHandler(tx, rpc);
+    handler
+        .onSuccess(async function (response) {
+            console.log("Success... tx, receipt: "+ JSON.stringify(response));
+            let accountInfo = await rpc.blockchain.getContractStorage("vote_producer.iost","producerTable",accountList[0].getID());
+            console.log(JSON.stringify(accountInfo), typeof(accountInfo))
+            assert.notEqual(JSON.stringify(accountInfo).indexOf(`"data":"null"`), -1)
+        })
+        .send()
+        .listen(1000, 10);
+    return checkHandler(handler)
+})
+
 // .then(function () {
 //     const tx = iost.callABI("auth.iost", "dropPermission", ["producer01", "vote"]);
 //     producer01.signTx(tx);
