@@ -145,7 +145,7 @@ delay().then(function () {
         .onSuccess(async function (response) {
             console.log("Success... tx, receipt: "+ JSON.stringify(response));
             let accountInfo = await rpc.blockchain.getContractStorage("vote_producer.iost","producerTable",accountList[0].getID());
-            console.log(JSON.stringify(accountInfo), typeof(accountInfo))
+            console.log(JSON.stringify(accountInfo), typeof(accountInfo));
             let res = `"data":"{\\"pubkey\\":\\"`+userPrefix+`\\",\\"loc\\":\\"\\",\\"url\\":\\"`+userPrefix+`\\",\\"netId\\":\\"\\",\\"isProducer\\":true,\\"status\\":0,\\"online\\":false}`
             assert.notEqual(JSON.stringify(accountInfo).indexOf(res), -1)
         })
@@ -187,7 +187,7 @@ delay().then(function () {
         .send()
         .listen(1000, 10);
     return checkHandler(handler)
-})
+});
 
 // .then(function () {
 //     const tx = iost.callABI("auth.iost", "dropPermission", ["producer01", "vote"]);

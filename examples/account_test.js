@@ -81,7 +81,7 @@ delay().then(function () {
         .onSuccess(async function (response) {
             console.log("Success... tx, receipt: "+ JSON.stringify(response));
             let accountInfo = await rpc.blockchain.getAccountInfo(myid, false);
-            console.log(JSON.stringify(accountInfo), typeof(accountInfo))
+            console.log(JSON.stringify(accountInfo), typeof(accountInfo));
             assert.notEqual(JSON.stringify(accountInfo).indexOf(`"perm1":{"name":"perm1","groups":[],"items":[],"threshold":"1"}}`), -1)
         })
         .send()
