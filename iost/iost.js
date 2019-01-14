@@ -4,7 +4,7 @@ const TxHandler = require('./tx_handler');
 
 const defaultConfig = {
     gasRatio: 1,
-    gasLimit: 1000000,
+    gasLimit: 2000000,
     delay: 0,
     expiration: 90,
     defaultLimit: "unlimited"

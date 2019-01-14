@@ -26,7 +26,6 @@ const checkHandler = function (handler, status) {
     });
 };
 let contractID = "";
-let url = "";
 
 // init iost sdk
 const iost = new IOST.IOST({ // will use default setting if not set
@@ -50,8 +49,8 @@ const Failed = function (e) {
 const accountList = new Array(3);
 let userPrefix = Date.now().toString();
 userPrefix = "u" + userPrefix.substr(userPrefix.length - 8);
-let tokenSym = Date.now().toString();
-tokenSym = "t" + tokenSym.substr(tokenSym.length - 4);
+
+let cname = process.argv[2];
 
 delay().then(function () {
 // create account
@@ -79,6 +78,143 @@ delay().then(function () {
     return delay(5000);
 })
 .then(function () {
+    for (let i = 0; i < accountList.length; i++) {
+        assert(accountList[i] !== undefined);
+        assert.equal(accountList[i].getID(), userPrefix + i);
+    }
+})
+.then(function () {
+    // set domain to 0.0.0
+    const tx = iost.callABI("system.iost", "updateNativeCode", ["domain.iost", "0.0.0", ""]);
+    account.signTx(tx);
+
+    const handler = new IOST.TxHandler(tx, rpc);
+    handler
+        .onSuccess(function (response) {
+            console.log("Success... tx, receipt: " + JSON.stringify(response));
+        })
+        .send()
+        .listen(1000, 10);
+
+    return checkHandler(handler);
+})
+.then(function() {
+    // can't link domain
+    url = "hello.me" + Date.now().toString().substr(8);
+    const tx = iost.callABI("domain.iost", "Link", [url, contractID]);
+    account.signTx(tx);
+
+    const handler = new IOST.TxHandler(tx, rpc);
+    handler
+        .onSuccess(function (response) {
+            console.log("Success... tx, receipt: " + JSON.stringify(response));
+        })
+        .onFailed(function (response) {
+            console.log("Expected failed... : " + JSON.stringify(response));
+            assert.equal(response.message.includes("abi Link not found"), true);
+        })
+        .send()
+        .listen(1000, 10);
+
+    return checkHandler(handler, "failed");
+})
+.then(function () {
+    // update domain without permission
+    const tx = iost.callABI("system.iost", "updateNativeCode", ["domain.iost", "1.0.0", ""]);
+    accountList[0].signTx(tx);
+
+    const handler = new IOST.TxHandler(tx, rpc);
+    handler
+        .onSuccess(function (response) {
+            console.log("Success... tx, receipt: " + JSON.stringify(response));
+        })
+        .onFailed(function (response) {
+            console.log("Expected failed... : " + JSON.stringify(response));
+            assert.equal(response.message.includes("need admin@system permission"), true);
+        })
+        .send()
+        .listen(1000, 10);
+
+    return checkHandler(handler, "failed");
+})
+.then(function () {
+    // update part of domain
+    let con = {
+        "ID": "domain.iost",
+        "info": {
+            "lang": "native",
+            "version": "1.0.0",
+            "abi": [
+                {"name": "can_update", "args": ["string"], "amountLimit": []},
+                {"name": "link", "args": ["string", "string"], "amounLimit": []}
+            ]
+        },
+        "code": ""
+    };
+    const tx = iost.callABI("system.iost", "updateNativeCode", ["domain.iost", "", JSON.stringify(con)]);
+    account.signTx(tx);
+
+    const handler = new IOST.TxHandler(tx, rpc);
+    handler
+        .onSuccess(function (response) {
+            console.log("Success... tx, receipt: " + JSON.stringify(response));
+        })
+        .send()
+        .listen(1000, 10);
+
+    return checkHandler(handler);
+})
+.then(function() {
+    // link domain
+    url = "hello.me" + Date.now().toString().substr(8);
+    const tx = iost.callABI("domain.iost", "link", [url, contractID]);
+    account.signTx(tx);
+
+    const handler = new IOST.TxHandler(tx, rpc);
+    handler
+        .onSuccess(function (response) {
+            console.log("Success... tx, receipt: " + JSON.stringify(response));
+        })
+        .send()
+        .listen(1000, 10);
+
+    return checkHandler(handler);
+})
+.then(function() {
+    // can't transfer domain
+    const tx = iost.callABI("domain.iost", "transfer", [url, contractID]);
+    account.signTx(tx);
+
+    const handler = new IOST.TxHandler(tx, rpc);
+    handler
+        .onSuccess(function (response) {
+            console.log("Success... tx, receipt: " + JSON.stringify(response));
+        })
+        .onFailed(function (response) {
+            console.log("Expected failed... : " + JSON.stringify(response));
+            assert.equal(response.message.includes("abi transfer not found"), true);
+        })
+        .send()
+        .listen(1000, 10);
+
+    return checkHandler(handler, "failed");
+})
+.then(function () {
+    // update domain
+    const tx = iost.callABI("system.iost", "updateNativeCode", ["domain.iost", "1.0.0", ""]);
+    account.signTx(tx);
+
+    const handler = new IOST.TxHandler(tx, rpc);
+    handler
+        .onSuccess(function (response) {
+            console.log("Success... tx, receipt: " + JSON.stringify(response));
+        })
+        .send()
+        .listen(1000, 10);
+
+    return checkHandler(handler);
+})
+.then(function () {
     // setcode
     let helloContract = '{"ID":"hw","info":{"lang":"javascript","version":"1.0.0","abi":[{"name":"hello"}, {"name":"can_update"}]},"code":"class Contract {init(){} hello(){return \\"world\\";} can_update(){return true;}} module.exports = Contract;"}';
     const tx = iost.callABI("system.iost", "setCode", [helloContract]);
@@ -95,44 +231,6 @@ delay().then(function () {
         .listen(1000, 10);
 
     return checkHandler(handler);
-})
-.then(function () {
-    // transfer domain without owner
-    url = "hello.me" + Date.now().toString().substr(8);
-    const tx = iost.callABI("domain.iost", "transfer", [url, account.getID()]);
-    account.signTx(tx);
-
-    const handler = new IOST.TxHandler(tx, rpc);
-    handler
-        .onSuccess(function (response) {
-            console.log("Success... tx, receipt: " + JSON.stringify(response));
-        })
-        .onFailed(function (response) {
-            console.log("Expected failed... : " + JSON.stringify(response));
-        })
-        .send()
-        .listen(1000, 10);
-
-    return checkHandler(handler, "failed");
-})
-.then(function () {
-    // link domain wrong format
-    url = Date.now().toString().substr(8);
-    const tx = iost.callABI("domain.iost", "link", [url, contractID]);
-    account.signTx(tx);
-
-    const handler = new IOST.TxHandler(tx, rpc);
-    handler
-        .onSuccess(function (response) {
-            console.log("Success... tx, receipt: " + JSON.stringify(response));
-        })
-        .onFailed(function (response) {
-            console.log("Expected failed... : " + JSON.stringify(response));
-        })
-        .send()
-        .listen(1000, 10);
-
-    return checkHandler(handler, "failed");
 })
 .then(function () {
     // link domain
@@ -167,24 +265,6 @@ delay().then(function () {
     return checkHandler(handler);
 })
 .then(function () {
-    // transfer url without permission
-    const tx = iost.callABI("domain.iost", "transfer", [url, accountList[0].getID()]);
-    accountList[0].signTx(tx);
-
-    const handler = new IOST.TxHandler(tx, rpc);
-    handler
-        .onSuccess(function (response) {
-            console.log("Success... tx, receipt: " + JSON.stringify(response));
-        })
-        .onFailed(function (response) {
-            console.log("Expected failed... : " + JSON.stringify(response));
-        })
-        .send()
-        .listen(1000, 10);
-
-    return checkHandler(handler, "failed");
-})
-.then(function () {
     // transfer url
     const tx = iost.callABI("domain.iost", "transfer", [url, accountList[0].getID()]);
     account.signTx(tx);
@@ -198,88 +278,6 @@ delay().then(function () {
         .listen(1000, 10);
 
     return checkHandler(handler);
-})
-.then(function () {
-    // transfer url to self
-    const tx = iost.callABI("domain.iost", "transfer", [url, accountList[0].getID()]);
-    accountList[0].signTx(tx);
-
-    const handler = new IOST.TxHandler(tx, rpc);
-    handler
-        .onSuccess(function (response) {
-            console.log("Success... tx, receipt: " + JSON.stringify(response));
-        })
-        .send()
-        .listen(1000, 10);
-
-    return checkHandler(handler);
-})
-.then(function () {
-    // setcode
-    let helloContract = '{"ID":"hw","info":{"lang":"javascript","version":"1.0.0","abi":[{"name":"hello1", "args":["string"]}, {"name":"can_update"}]},"code":"class Contract {init(){} hello1(data){return data;} can_update(){return true;}} module.exports = Contract;"}';
-    const tx = iost.callABI("system.iost", "setCode", [helloContract]);
-    accountList[0].signTx(tx);
-
-    const handler = new IOST.TxHandler(tx, rpc);
-    handler
-        .onSuccess(function (response) {
-            console.log("Success... tx, receipt: " + JSON.stringify(response));
-            contractID = JSON.parse(response.returns[0])[0];
-            console.log("Contract ID = " + contractID)
-        })
-        .send()
-        .listen(1000, 10);
-
-    return checkHandler(handler);
-})
-.then(function () {
-    // link domain to another contract
-    const tx = iost.callABI("domain.iost", "link", [url, contractID]);
-    accountList[0].signTx(tx);
-
-    const handler = new IOST.TxHandler(tx, rpc);
-    handler
-        .onSuccess(function (response) {
-            console.log("Success... tx, receipt: " + JSON.stringify(response));
-        })
-        .send()
-        .listen(1000, 10);
-
-    return checkHandler(handler);
-})
-.then(function () {
-    // call domain
-    const tx = iost.callABI(url, "hello1", ["hello1"]);
-    account.signTx(tx);
-
-    const handler = new IOST.TxHandler(tx, rpc);
-    handler
-        .onSuccess(function (response) {
-            console.log("Success... tx, receipt: " + JSON.stringify(response));
-            assert.equal(response.returns[0], "[\"hello1\"]");
-        })
-        .send()
-        .listen(1000, 10);
-
-    return checkHandler(handler);
-})
-.then(function () {
-    // link domain, can't link without owner permission
-    const tx = iost.callABI("domain.iost", "link", [url, contractID]);
-    account.signTx(tx);
-
-    const handler = new IOST.TxHandler(tx, rpc);
-    handler
-        .onSuccess(function (response) {
-            console.log("Success... tx, receipt: " + JSON.stringify(response));
-        })
-        .onFailed(function (response) {
-            console.log("Expected failed... : " + JSON.stringify(response));
-        })
-        .send()
-        .listen(1000, 10);
-
-    return checkHandler(handler, "failed");
 })
 .catch(Failed)
 ;

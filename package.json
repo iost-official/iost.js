@@ -1,6 +1,6 @@
 {
   "name": "iost",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "description": "iost JavaScript SDK",
   "main": "index.js",
   "author": "IOST.IO",
