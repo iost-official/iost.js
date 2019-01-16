@@ -51,7 +51,6 @@ class IOST {
      */
     transfer(token, from, to, amount, memo = "") {
         let t = this.callABI("token.iost", "transfer", [token, from, to, amount, memo]);
-        t.addApprove("*", this.config.defaultLimit);
         t.addApprove("iost", amount);
         return t;
     }
