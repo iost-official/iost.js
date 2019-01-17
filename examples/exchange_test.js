@@ -36,7 +36,7 @@ const iost = new IOST.IOST({ // will use default setting if not set
     expiration: 90,
     defaultLimit: "unlimited"
 });
-const rpc = new IOST.RPC(new IOST.HTTPProvider('http://47.244.109.92:30001'));
+const rpc = new IOST.RPC(new IOST.HTTPProvider('http://127.0.0.1:30001'));
 
 // init admin account
 const account = new IOST.Account("admin");
@@ -91,7 +91,7 @@ delay().then(function () {
     let vmContract = {"ID":"", "info":abi, "code":code};
 
     // require auth
-    const tx = iost.callABI("system.iost", "SetCode", [JSON.stringify(vmContract)]);
+    const tx = iost.callABI("system.iost", "setCode", [JSON.stringify(vmContract)]);
     accountList[0].signTx(tx);
 
     const handler = new IOST.TxHandler(tx, rpc);
@@ -122,8 +122,8 @@ delay().then(function () {
                 console.log("Success... tx, receipt: "+ JSON.stringify(response));
                 let nbAdmin = await rpc.blockchain.getBalance("admin", "iost");
                 let nb0 = await rpc.blockchain.getBalance(accountList[0].getID(), "iost");
-                assert.equal(nbAdmin.balance, new Number(obAdmin.balance - 1000.1).toFixed(8));
-                assert.equal(nb0.balance, new Number(ob0.balance + 1000.1).toFixed(8));
+                assert.equal(nbAdmin.balance, Number(obAdmin.balance - 1000.1).toFixed(8));
+                assert.equal(nb0.balance, Number(ob0.balance + 1000.1).toFixed(8));
             })
             .send()
             .listen(1000, 8);
@@ -184,8 +184,8 @@ delay().then(function () {
                 console.log("Success... tx, receipt: " + JSON.stringify(response));
                 let nbNew = await rpc.blockchain.getBalance(userPrefix + "na", "iost");
                 let nb1 = await rpc.blockchain.getBalance(accountList[1].getID(), "iost");
-                assert.equal(nbNew.balance, new Number(obNew.balance - 100).toFixed(8));
-                assert.equal(nb1.balance, new Number(ob1.balance + 100).toFixed(8));
+                assert.equal(nbNew.balance, Number(obNew.balance - 100).toFixed(8));
+                assert.equal(nb1.balance, Number(ob1.balance + 100).toFixed(8));
             })
             .send()
             .listen(1000, 10);

@@ -81,7 +81,7 @@ delay().then(function () {
         assert.equal(accountList[i].getID(), userPrefix + i);
     }
     // require auth
-    const tx = iost.callABI("system.iost", "RequireAuth", [accountList[0].getID(), "active"]);
+    const tx = iost.callABI("system.iost", "requireAuth", [accountList[0].getID(), "active"]);
     accountList[0].signTx(tx);
 
     const handler = new IOST.TxHandler(tx, rpc);
@@ -97,7 +97,7 @@ delay().then(function () {
 })
 .then(function () {
     // require auth
-    const tx = iost.callABI("system.iost", "RequireAuth", [accountList[0].getID(), "active"]);
+    const tx = iost.callABI("system.iost", "requireAuth", [accountList[0].getID(), "active"]);
     account.signTx(tx);
 
     const handler = new IOST.TxHandler(tx, rpc);
@@ -113,7 +113,7 @@ delay().then(function () {
 })
 .then(function () {
     // require auth
-    const tx = iost.callABI("system.iost", "RequireAuth", [accountList[0].getID(), "undefined"]);
+    const tx = iost.callABI("system.iost", "requireAuth", [accountList[0].getID(), "undefined"]);
     accountList[0].signTx(tx);
 
     const handler = new IOST.TxHandler(tx, rpc);
@@ -130,14 +130,14 @@ delay().then(function () {
 .then(function () {
     // receipt
     const receipt = "receipt from sdk";
-    const tx = iost.callABI("system.iost", "Receipt", [receipt]);
+    const tx = iost.callABI("system.iost", "receipt", [receipt]);
     account.signTx(tx);
 
     const handler = new IOST.TxHandler(tx, rpc);
     handler
         .onSuccess(function (response) {
             console.log("Success... tx, receipt: " + JSON.stringify(response));
-            assert.equal(JSON.stringify(response.receipts[0]), '{"func_name":"system.iost/Receipt","content":"' + receipt + '"}');
+            assert.equal(JSON.stringify(response.receipts[0]), '{"func_name":"system.iost/receipt","content":"' + receipt + '"}');
         })
         .send()
         .listen(1000, 10);
@@ -147,7 +147,7 @@ delay().then(function () {
 .then(function () {
     // setcode
     let helloContract = '{"ID":"hw","info":{"lang":"javascript","version":"1.0.0","abi":[{"name":"hello"}, {"name":"can_update", "args": ["string"]}]},"code":"class Contract {init(){} hello(){return \\"world\\";} can_update(data){return true;}} module.exports = Contract;"}';
-    const tx = iost.callABI("system.iost", "SetCode", [helloContract]);
+    const tx = iost.callABI("system.iost", "setCode", [helloContract]);
     account.signTx(tx);
 
     const handler = new IOST.TxHandler(tx, rpc);
@@ -181,7 +181,7 @@ delay().then(function () {
 .then(function () {
     // update code
     let helloContract = '{"ID":"' + contractID + '","info":{"lang":"javascript","version":"1.0.0","abi":[{"name":"hello", "args":["string"]}, {"name":"can_update", "args":["string"]}]},"code":"class Contract {init(){} hello(data){return data;} can_update(data){return false;}} module.exports = Contract;"}';
-    const tx = iost.callABI("system.iost", "UpdateCode", [helloContract, ""]);
+    const tx = iost.callABI("system.iost", "updateCode", [helloContract, ""]);
     account.signTx(tx);
 
     const handler = new IOST.TxHandler(tx, rpc);
@@ -214,7 +214,7 @@ delay().then(function () {
 .then(function () {
     // update code, shouldn't success
     let helloContract = '{"ID":"' + contractID + '","info":{"lang":"javascript","version":"1.0.0","abi":[{"name":"hello", "args":["string"]}]},"code":"class Contract {init(){} hello(data){return data;}} module.exports = Contract;"}';
-    const tx = iost.callABI("system.iost", "UpdateCode", [helloContract, ""]);
+    const tx = iost.callABI("system.iost", "updateCode", [helloContract, ""]);
     account.signTx(tx);
 
     const handler = new IOST.TxHandler(tx, rpc);
