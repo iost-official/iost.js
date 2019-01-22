@@ -101,7 +101,7 @@ delay().then(function () {
 .then(function() {
     // can't link domain
     url = "hello.me" + Date.now().toString().substr(8);
-    const tx = iost.callABI("domain.iost", "Link", [url, contractID]);
+    const tx = iost.callABI("domain.iost", "link", [url, contractID]);
     account.signTx(tx);
 
     const handler = new IOST.TxHandler(tx, rpc);
