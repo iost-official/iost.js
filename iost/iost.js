@@ -23,6 +23,8 @@ class IOST {
             return
         }
         Object.assign(this.config, config);
+        this.rpc = undefined;
+        this.account = undefined;
     }
 
     /**
@@ -80,13 +82,34 @@ class IOST {
      * 钱包预留接口，可以获得来自钱包的账户
      */
     currentAccount() {
+        return this.account;
     }
 
     /**
      * 钱包预留接口，可以获得来自钱包的provider
      */
-    currentProvider() {
+    currentRPC() {
+        return this.rpc;
     }
+
+    /**
+     * set a RPC to this iost
+     * @param {RPC}rpc - rpc created by hand
+     */
+    setRPC(rpc) {
+        this.rpc = rpc;
+    };
+
+    /**
+     * set an account to this iost
+     * @param {Account}account - rpc created by hand
+     *
+     */
+    setAccount(account) {
+        this.account = account;
+    }
+
+
 
 }
 
