@@ -79,25 +79,11 @@ class IOST {
     }
 
     /**
-     * 钱包预留接口，可以获得来自钱包的账户
-     */
-    currentAccount() {
-        return this.account;
-    }
-
-    /**
-     * 钱包预留接口，可以获得来自钱包的provider
-     */
-    currentRPC() {
-        return this.rpc;
-    }
-
-    /**
      * set a RPC to this iost
      * @param {RPC}rpc - rpc created by hand
      */
     setRPC(rpc) {
-        this.rpc = rpc;
+        this.currentRPC = rpc;
     };
 
     /**
@@ -106,7 +92,7 @@ class IOST {
      *
      */
     setAccount(account) {
-        this.account = account;
+        this.currentAccount = account;
     }
 
 
