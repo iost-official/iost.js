@@ -45,7 +45,9 @@ const Failed = function (e) {
 };
 const accountList = new Array(3);
 let userPrefix = Date.now().toString();
-userPrefix = "u" + userPrefix.substr(userPrefix.length - 8);
+userPrefix = "u" + userPrefix.substr(userPrefix.length - 8);npm
+
+
 let tokenSym = Date.now().toString();
 tokenSym = "t" + tokenSym.substr(tokenSym.length - 4);
 let myid = userPrefix + "my";
