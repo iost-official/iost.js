@@ -75,6 +75,19 @@ class IOST {
         t.addApprove("*", this.config.defaultLimit);
         return t
     }
+
+    /**
+     * 钱包预留接口，可以获得来自钱包的账户
+     */
+    currentAccount() {
+    }
+
+    /**
+     * 钱包预留接口，可以获得来自钱包的provider
+     */
+    currentProvider() {
+    }
+
 }
 
 module.exports = IOST;
