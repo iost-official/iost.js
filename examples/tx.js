@@ -51,3 +51,8 @@ newAccountHandler
     })
     .send()
     .listen(1000, 90);
+
+const tx2 = iost.callABI("token.iost", "transfer", ["iost", "admin", "admin", "10.000", ""]);
+iost.setAccount(account);
+iost.setRPC(rpc);
+iost.SignAndSend().on()

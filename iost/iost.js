@@ -79,11 +79,11 @@ class IOST {
     }
 
     /**
-     *
+     * 直接发送交易
      * @param tx
      * @constructor
      */
-    SignAndSend(tx) {
+    signAndSend(tx) {
         let cb = new Callback();
         let hash = "";
         this.account.signTx(tx);
@@ -107,16 +107,18 @@ class IOST {
             if (status === "success" || status === "failed" || i > 90) {
                 clearInterval(id);
                 if (status !== "success" && status !== "failed" && i > 90) {
-                    Failed("Error: tx " + hash + " on chain timeout.");
+                    cb.pushMsg("failed", "Error: tx " + hash + " on chain timeout.");
                 }
                 return
             }
             i++;
-            self.rpc.transaction.getTxReceiptByTxHash(_hash).then(function (res) {
+            self.rpc.transaction.getTxReceiptByTxHash(hash).then(function (res) {
                 if (res.status_code === "SUCCESS" && status === "pending") {
-                    Success(res)
+                    cb.pushMsg("success", res);
+                    status = "idle"
                 } else if (res.status_code !== undefined && status === "pending") {
-                    Failed(res)
+                    cb.pushMsg("failed", res);
+                    status = "failed"
                 }
             }).catch(function (e) {
             })
@@ -142,7 +144,7 @@ class IOST {
      * @param {RPC}rpc - rpc created by hand
      */
     setRPC(rpc) {
-        this.rpc = rpc;
+        this.currentRPC = rpc;
     };
 
     /**
@@ -151,7 +153,7 @@ class IOST {
      *
      */
     setAccount(account) {
-        this.account = account;
+        this.currentAccount = account;
     }
 
 
