@@ -79,6 +79,51 @@ class IOST {
     }
 
     /**
+     *
+     * @param tx
+     * @constructor
+     */
+    SignAndSend(tx) {
+        let cb = new Callback();
+        let hash = "";
+        this.account.signTx(tx);
+        this.rpc.sendTx(tx)
+            .then(function(data){
+                hash = data.hash;
+                cb.pushMsg("pending", hash)
+            })
+            .catch(function (e) {
+                cb.pushMsg("failed", e)
+            });
+
+        let status = "pending";
+        let i = 1;
+        let self = this;
+        let id = setInterval(function () {
+
+            if (status === "idle") {
+                return
+            }
+            if (status === "success" || status === "failed" || i > 90) {
+                clearInterval(id);
+                if (status !== "success" && status !== "failed" && i > 90) {
+                    Failed("Error: tx " + hash + " on chain timeout.");
+                }
+                return
+            }
+            i++;
+            self.rpc.transaction.getTxReceiptByTxHash(_hash).then(function (res) {
+                if (res.status_code === "SUCCESS" && status === "pending") {
+                    Success(res)
+                } else if (res.status_code !== undefined && status === "pending") {
+                    Failed(res)
+                }
+            }).catch(function (e) {
+            })
+        }, parseInt(1000));
+    }
+
+    /**
      * 钱包预留接口，可以获得来自钱包的账户
      */
     currentAccount() {
