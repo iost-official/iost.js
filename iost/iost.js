@@ -1,6 +1,7 @@
 const RPC = require('../lib/rpc');
 const {Tx} = require('../lib/structs');
 const TxHandler = require('./tx_handler');
+const Callback = require('./callback');
 
 const defaultConfig = {
     gasRatio: 1,
@@ -90,8 +91,8 @@ class IOST {
     signAndSend(tx) {
         let cb = new Callback();
         let hash = "";
-        this.account.signTx(tx);
-        this.rpc.sendTx(tx)
+        this.currentAccount.signTx(tx);
+        this.currentRPC.transaction.sendTx(tx)
             .then(function(data){
                 hash = data.hash;
                 cb.pushMsg("pending", hash)
@@ -104,10 +105,6 @@ class IOST {
         let i = 1;
         let self = this;
         let id = setInterval(function () {
-
-            if (status === "idle") {
-                return
-            }
             if (status === "success" || status === "failed" || i > 90) {
                 clearInterval(id);
                 if (status !== "success" && status !== "failed" && i > 90) {
@@ -116,31 +113,33 @@ class IOST {
                 return
             }
             i++;
-            self.rpc.transaction.getTxReceiptByTxHash(hash).then(function (res) {
+            self.currentRPC.transaction.getTxReceiptByTxHash(hash).then(function (res) {
                 if (res.status_code === "SUCCESS" && status === "pending") {
                     cb.pushMsg("success", res);
-                    status = "idle"
+                    status = "success"
                 } else if (res.status_code !== undefined && status === "pending") {
                     cb.pushMsg("failed", res);
                     status = "failed"
                 }
             }).catch(function (e) {
             })
-        }, parseInt(1000));
+        }, 1000);
+
+        return cb;
     }
 
     /**
      * 钱包预留接口，可以获得来自钱包的账户
      */
     currentAccount() {
-        return this.account;
+        return this.currentAccount;
     }
 
     /**
      * 钱包预留接口，可以获得来自钱包的provider
      */
     currentRPC() {
-        return this.rpc;
+        return this.currentRPC;
     }
 
     /**
