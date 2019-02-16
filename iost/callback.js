@@ -5,6 +5,7 @@ class Callback {
 
     on(msg, f) {
         this.map[msg] = f;
+        return this;
     }
 
     pushMsg(msg, args) {
@@ -16,3 +17,5 @@ class Callback {
     }
 
 }
+
+module.exports = Callback;
