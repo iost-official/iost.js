@@ -127,6 +127,7 @@ class IOST {
             }).catch(function (e) {
             })
         }, parseInt(1000));
+        return cb
     }
 
     /**
@@ -159,8 +160,6 @@ class IOST {
     setAccount(account) {
         this.currentAccount = account;
     }
-
-
 
 }
 

@@ -83,6 +83,11 @@ class TxHandler {
     }
 
     listen(interval, times) {
+        if (!interval || !times) {
+            interval = 1000;
+            times = 90
+        }
+
         let self = this;
 
         let i = 1;
