@@ -26,8 +26,8 @@ const checkHandler = function (handler, status) {
         }, 1000);
     });
 };
-let contractID = "ContractZGVqhY3c65xRs8aoC4dUdACVCKSwhMMsg2negSFxpr3";
-let testDataPath = "/home/wangyu/gocode/src/github.com/iost-official/go-iost/contract/";
+let contractID = "exchange.iost";
+let testDataPath = "/home/wangyu/gocode/src/github.com/iost-official/go-iost/config/genesis/contract/";
 
 // init iost sdk
 const iost = new IOST.IOST({ // will use default setting if not set
