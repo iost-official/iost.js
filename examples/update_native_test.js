@@ -111,7 +111,7 @@ delay().then(function () {
         })
         .onFailed(function (response) {
             console.log("Expected failed... : " + JSON.stringify(response));
-            assert.equal(response.message.includes("abi Link not found"), true);
+            assert.equal(response.message.includes("abi link not found"), true);
         })
         .send()
         .listen(1000, 10);
