@@ -45,7 +45,7 @@ const Failed = function (e) {
 };
 const accountList = new Array(3);
 let userPrefix = Date.now().toString();
-userPrefix = "u" + userPrefix.substr(userPrefix.length - 8);npm
+userPrefix = "u" + userPrefix.substr(userPrefix.length - 8);
 
 
 let tokenSym = Date.now().toString();
@@ -84,7 +84,7 @@ delay().then(function () {
             console.log("Success... tx, receipt: "+ JSON.stringify(response));
             let accountInfo = await rpc.blockchain.getAccountInfo(myid, false);
             console.log(JSON.stringify(accountInfo), typeof(accountInfo));
-            assert.notEqual(JSON.stringify(accountInfo).indexOf(`"perm1":{"name":"perm1","groups":[],"items":[],"threshold":"1"}}`), -1)
+            assert.notEqual(JSON.stringify(accountInfo).indexOf(`"perm1":{"name":"perm1","group_names":[],"items":[],"threshold":"1"}}`), -1)
         })
         .send()
         .listen(1000, 10);
@@ -98,7 +98,7 @@ delay().then(function () {
         .onSuccess(async function (response) {
             console.log("Success... tx, receipt: "+ JSON.stringify(response));
             let accountInfo = await rpc.blockchain.getAccountInfo(myid, false);
-            assert.equal(JSON.stringify(accountInfo).indexOf(`"perm1":{"name":"perm1","groups":[],"items":[],"threshold":"1"}}`), -1)
+            assert.equal(JSON.stringify(accountInfo).indexOf(`"perm1":{"name":"perm1","group_names":[],"items":[],"threshold":"1"}}`), -1)
         })
         .send()
         .listen(1000, 10);
@@ -182,7 +182,7 @@ delay().then(function () {
         .onSuccess(async function (response) {
             console.log("Success... tx, receipt: "+ JSON.stringify(response));
             let accountInfo = await rpc.blockchain.getAccountInfo(myid, false);
-            assert.notEqual(JSON.stringify(accountInfo).indexOf(`"groups":["grp0"]`), -1)
+            assert.notEqual(JSON.stringify(accountInfo).indexOf(`"group_names":["grp0"]`), -1)
         })
         .send()
         .listen(1000, 10);
@@ -196,7 +196,7 @@ delay().then(function () {
         .onSuccess(async function (response) {
             console.log("Success... tx, receipt: "+ JSON.stringify(response));
             let accountInfo = await rpc.blockchain.getAccountInfo(myid, false);
-            assert.equal(JSON.stringify(accountInfo).indexOf(`"groups":["grp0"]`), -1)
+            assert.equal(JSON.stringify(accountInfo).indexOf(`"group_names":["grp0"]`), -1)
         })
         .send()
         .listen(1000, 10);
