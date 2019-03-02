@@ -17,3 +17,9 @@ module.exports = {
     Account: Account,
     TxHandler: TxHandler,
 };
+
+(function(){
+    if(typeof window !== 'undefined'){
+        window.IOST = module.exports
+    }
+})();
