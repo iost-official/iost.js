@@ -9,6 +9,11 @@ Using npm in your project
 npm install iost
 ```
 
+## CDN
+```
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/iost@0.1.0/iost.min.js"></script>
+```
+
 ## Usage
 ```
 const IOST = require('iost.js')
