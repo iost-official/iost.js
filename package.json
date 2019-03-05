@@ -1,6 +1,6 @@
 {
   "name": "iost",
-  "version": "0.0.20",
+  "version": "0.1.2",
   "description": "iost JavaScript SDK",
   "main": "index.js",
   "author": "IOST.IO",
@@ -16,5 +16,8 @@
     "long": "^4.0.0",
     "sha3": "^2.0.0",
     "tweetnacl": "^1.0.0"
+  },
+  "devDependencies": {
+    "browserify": "^16.2.3"
   }
 }

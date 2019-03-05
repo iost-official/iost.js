@@ -9,9 +9,15 @@ Using npm in your project
 npm install iost
 ```
 
+## CDN
+```
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/iost@0.1.1/iost.min.js"></script>
+```
+exports to window.IOST global.
+
 ## Usage
 ```
-const IOST = require('iost.js')
+const IOST = require('iost')
 
 // use RPC
 const rpc = new IOST.RPC(new IOST.HTTPProvider("http://localhost:30001"));
