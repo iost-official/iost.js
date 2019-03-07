@@ -20,6 +20,9 @@ npm-debug.log
 .idea/**/dynamic.xml
 .idea/**/uiDesigner.xml
 
+lib/crypto/debug_test.js
+examples/test.js
+
 # Gradle:
 .idea/**/gradle.xml
 .idea/**/libraries
