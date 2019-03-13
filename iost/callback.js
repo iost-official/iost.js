@@ -42,7 +42,7 @@ class Callback {
                     self.status = "failed"
                 }
             }).catch(function (e) {
-                console.log(i)
+                // console.log(i)
             })
 
         }, 1000);
