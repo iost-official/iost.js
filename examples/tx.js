@@ -41,21 +41,24 @@ account.signTx(newAccountTx);
 
 console.log("new seckey is "+ newKP.B58SecKey());
 
-const newAccountHandler = new IOST.TxHandler(newAccountTx, rpc);
-newAccountHandler
-    .onPending(function (response) {
-        console.log("account request: "+ response.hash + " has sent to node")
-    })
-    .onSuccess(function (response) {
-        console.log("sign up success, here is the receipt: "+ JSON.stringify(response))
-    })
-    .send()
-    .listen(1000, 90);
+// const newAccountHandler = new IOST.TxHandler(newAccountTx, rpc);
+// newAccountHandler
+//     .onPending(function (response) {
+//         console.log("account request: "+ response.hash + " has sent to node")
+//     })
+//     .onSuccess(function (response) {
+//         console.log("sign up success, here is the receipt: "+ JSON.stringify(response))
+//     })
+//     .send()
+//     .listen(1000, 90);
 
 const tx2 = iost.callABI("token.iost", "transfer", ["iost", "admin", "admin", "10.000", ""]);
 iost.setAccount(account);
 iost.setRPC(rpc);
 iost.signAndSend(tx2)
     .on("pending", console.log)
-    .on("success", console.log)
+    .on("success", function (info) {
+        console.log("success here")
+        console.log(info)
+    })
     .on("failed", console.log);

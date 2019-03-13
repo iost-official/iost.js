@@ -89,42 +89,18 @@ class IOST {
      * @constructor
      */
     signAndSend(tx) {
-        let cb = new Callback();
+        let cb = new Callback(this.currentRPC.transaction);
         let hash = "";
         this.currentAccount.signTx(tx);
         this.currentRPC.transaction.sendTx(tx)
             .then(function(data){
                 hash = data.hash;
-                cb.pushMsg("pending", hash)
+                cb.pushMsg("pending", hash);
+                cb.hash = hash
             })
             .catch(function (e) {
                 cb.pushMsg("failed", e)
             });
-
-        let status = "pending";
-        let i = 1;
-        let self = this;
-        let id = setInterval(function () {
-            if (status === "success" || status === "failed" || i > 90) {
-                clearInterval(id);
-                if (status !== "success" && status !== "failed" && i > 90) {
-                    cb.pushMsg("failed", "Error: tx " + hash + " on chain timeout.");
-                }
-                return
-            }
-            i++;
-            self.currentRPC.transaction.getTxReceiptByTxHash(hash).then(function (res) {
-                if (res.status_code === "SUCCESS" && status === "pending") {
-                    cb.pushMsg("success", res);
-                    status = "success"
-                } else if (res.status_code !== undefined && status === "pending") {
-                    cb.pushMsg("failed", res);
-                    status = "failed"
-                }
-            }).catch(function (e) {
-            })
-
-        }, 1000);
 
         return cb;
     }
