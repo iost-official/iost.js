@@ -2,6 +2,7 @@ const RPC = require('../lib/rpc');
 const {Tx} = require('../lib/structs');
 const TxHandler = require('./tx_handler');
 const Callback = require('./callback');
+const Base58 = require('bs58');
 
 const defaultConfig = {
     gasRatio: 1,
@@ -70,6 +71,9 @@ class IOST {
      * @returns {Tx}
      */
     newAccount(name, creator, ownerkey, activekey, initialRAM, initialGasPledge) {
+        if (!this._checkPublicKey(ownerkey) || !this._checkPublicKey(activekey))
+            throw "error public key";
+
         const t = new Tx(this.config.gasRatio, this.config.gasLimit);
         t.addAction("auth.iost", "signUp", JSON.stringify([name, ownerkey, activekey]));
         if (initialRAM > 10) {
@@ -83,6 +87,11 @@ class IOST {
         return t
     }
 
+    _checkPublicKey(key) {
+        let b = Base58.decode(key);
+        return b.length === 32;
+    }
+
     /**
      * 直接发送交易
      * @param tx
@@ -92,15 +101,17 @@ class IOST {
         let cb = new Callback(this.currentRPC.transaction);
         let hash = "";
         this.currentAccount.signTx(tx);
-        this.currentRPC.transaction.sendTx(tx)
-            .then(function(data){
-                hash = data.hash;
-                cb.pushMsg("pending", hash);
-                cb.hash = hash
-            })
-            .catch(function (e) {
-                cb.pushMsg("failed", e)
-            });
+        setTimeout(function () {
+            this.currentRPC.transaction.sendTx(tx)
+                .then(function(data){
+                    hash = data.hash;
+                    cb.pushMsg("pending", hash);
+                    cb.hash = hash
+                })
+                .catch(function (e) {
+                    cb.pushMsg("failed", e)
+                })
+        }, 50);
 
         return cb;
     }
