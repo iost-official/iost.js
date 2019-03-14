@@ -28,7 +28,7 @@ class Callback {
             if (self.status === "success" || self.status === "failed" || i > 90) {
                 clearInterval(id);
                 if (self.status !== "success" && self.status !== "failed" && i > 90) {
-                    self.pushMsg("failed", "Error: tx " + hash + " on chain timeout.");
+                    self.pushMsg("failed", "Error: tx " + self.hash + " on chain timeout.");
                 }
                 return
             }
