@@ -100,9 +100,11 @@ class IOST {
     signAndSend(tx) {
         let cb = new Callback(this.currentRPC.transaction);
         let hash = "";
-        this.currentAccount.signTx(tx);
+        let self = this;
+
+        self.currentAccount.signTx(tx);
         setTimeout(function () {
-            this.currentRPC.transaction.sendTx(tx)
+            self.currentRPC.transaction.sendTx(tx)
                 .then(function(data){
                     hash = data.hash;
                     cb.pushMsg("pending", hash);
