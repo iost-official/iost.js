@@ -27,6 +27,7 @@ class IOST {
         Object.assign(this.config, config);
         this.rpc = undefined;
         this.account = undefined;
+        this.serverTimeDiff = 0;
     }
 
     /**
@@ -39,7 +40,7 @@ class IOST {
     callABI(contract, abi, args) {
         const t = new Tx(this.config.gasRatio, this.config.gasLimit);
         t.addAction(contract, abi, JSON.stringify(args));
-        t.setTime(this.config.expiration, this.config.delay);
+        t.setTime(this.config.expiration, this.config.delay, this.serverTimeDiff);
         t.addApprove("*", this.config.defaultLimit);
         return t
     }
@@ -82,7 +83,7 @@ class IOST {
         if (initialGasPledge > 0){
             t.addAction("gas.iost", "pledge", JSON.stringify([creator, name, initialGasPledge+""]));
         }
-        t.setTime(this.config.expiration, this.config.delay);
+        t.setTime(this.config.expiration, this.config.delay, this.serverTimeDiff);
         t.addApprove("*", this.config.defaultLimit);
         return t
     }
@@ -136,8 +137,14 @@ class IOST {
      * set a RPC to this iost
      * @param {RPC}rpc - rpc created by hand
      */
-    setRPC(rpc) {
+    async setRPC(rpc) {
         this.currentRPC = rpc;
+        
+        const clientTime = new Date().getTime() * 1e6;
+        const nodeInfo = await this.currentRPC.net.getNodeInfo();
+
+        this.serverTimeDiff = nodeInfo.server_time - clientTime;
+        console.log(this.serverTimeDiff);
     };
 
     /**

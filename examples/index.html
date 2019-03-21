@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <title>DApp test demo</title>
+  </head>
+
+  <body>
+    <div id="login"></div>
+    <button onclick="transfer()">transfer</button>
+    <div id="log"></div>
+
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/iost@0.1.2/iost.min.js"></script>
+  <script type="text/javascript">
+    function log(msg) {
+      var p = document.createElement('p');
+      p.innerHTML = msg;
+      document.getElementById('log').appendChild(p);
+    }
+
+    var transfer;
+    document.addEventListener("DOMContentLoaded", async function(event) {
+      await new Promise(done => setTimeout(() => done(), 500));
+
+      IWalletJS.enable().then(function(account) {
+        if(!account) return;
+
+        document.getElementById('login').innerHTML = "login in with: " + account;
+
+        const iost = IWalletJS.newIOST(IOST);
+
+        transfer = function() {
+          const tx = iost.callABI("token.iost", "transfer", ["iost", account, account, "0.000001", "dapp test memo"]);
+
+          iost.signAndSend(tx)
+            .on('pending', function(txid) {
+              log("txid: " + txid);
+            })
+            .on('success', function(result) {
+              log("res: " + JSON.stringify(result));
+            })
+            .on('failed', function(failed) {
+              log("failed: " + failed);
+            })
+        }
+      })
+    })
+  </script>
+  </body>
+</html>
