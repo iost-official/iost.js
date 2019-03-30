@@ -21,9 +21,3 @@ module.exports = {
     Bs58: base58,
     Signature: Signature,
 };
-
-(function(){
-    if(typeof window !== 'undefined'){
-        window.IOST = module.exports
-    }
-})();
