@@ -41,7 +41,6 @@ class IOST {
         const t = new Tx(this.config.gasRatio, this.config.gasLimit);
         t.addAction(contract, abi, JSON.stringify(args));
         t.setTime(this.config.expiration, this.config.delay, this.serverTimeDiff);
-        t.addApprove("*", this.config.defaultLimit);
         return t
     }
 
@@ -56,7 +55,6 @@ class IOST {
      */
     transfer(token, from, to, amount, memo = "") {
         let t = this.callABI("token.iost", "transfer", [token, from, to, amount, memo]);
-        t.addApprove("*", this.config.defaultLimit);
         t.addApprove("iost", amount);
         return t;
     }
@@ -84,7 +82,6 @@ class IOST {
             t.addAction("gas.iost", "pledge", JSON.stringify([creator, name, initialGasPledge+""]));
         }
         t.setTime(this.config.expiration, this.config.delay, this.serverTimeDiff);
-        t.addApprove("*", this.config.defaultLimit);
         return t
     }
 

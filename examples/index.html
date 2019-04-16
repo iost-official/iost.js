@@ -10,7 +10,7 @@
     <button onclick="transfer()">transfer</button>
     <div id="log"></div>
 
-  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/iost@0.1.10/iost.min.js"></script>
+  <script type="text/javascript" src="../iost.min.js"></script>
   <script type="text/javascript">
     function log(msg) {
       var p = document.createElement('p');
@@ -30,8 +30,10 @@
         const iost = IWalletJS.newIOST(IOST);
 
         transfer = function() {
-          const tx = iost.callABI("token.iost", "transfer", ["iost", account, account, "0.000001", "dapp test memo"]);
+          const tx = iost.callABI("token.iost", "transfer", ["iost", account, '888888', "0.1123", "dapp test memo"]);
+          tx.addApprove("iost", 0.1123);
 
+          console.log(tx.getApproveList());
           iost.signAndSend(tx)
             .on('pending', function(txid) {
               log("txid: " + txid);
@@ -40,7 +42,7 @@
               log("res: " + JSON.stringify(result));
             })
             .on('failed', function(failed) {
-              log("failed: " + failed);
+              log("failed: " + JSON.stringify(failed));
             })
         }
       })
