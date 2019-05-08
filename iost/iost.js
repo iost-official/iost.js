@@ -40,7 +40,6 @@ class IOST {
     callABI(contract, abi, args) {
         const t = new Tx(this.config.gasRatio, this.config.gasLimit);
         t.addAction(contract, abi, JSON.stringify(args));
-        t.setTime(this.config.expiration, this.config.delay, this.serverTimeDiff);
         return t
     }
 
@@ -81,7 +80,6 @@ class IOST {
         if (initialGasPledge > 0){
             t.addAction("gas.iost", "pledge", JSON.stringify([creator, name, initialGasPledge+""]));
         }
-        t.setTime(this.config.expiration, this.config.delay, this.serverTimeDiff);
         return t
     }
 
@@ -96,6 +94,7 @@ class IOST {
      * @constructor
      */
     signAndSend(tx) {
+        t.setTime(this.config.expiration, this.config.delay, this.serverTimeDiff);
         let cb = new Callback(this.currentRPC.transaction);
         let hash = "";
         let self = this;
