@@ -18,6 +18,7 @@
 	iost.setAccount(account);
 
 	const tx = iost.callABI("token.iost", "transfer", ["iost", "secrypto", "testnetiost", "0.14", ""]);
+	tx.addApprove('iost', 0.14);
 
 	iost.signAndSend(tx)
 		.on('pending', (response) => {

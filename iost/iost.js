@@ -137,11 +137,13 @@ class IOST {
     async setRPC(rpc) {
         this.currentRPC = rpc;
         
-        const clientTime = new Date().getTime() * 1e6;
+        const requestStartTime = new Date().getTime() * 1e6;
         const nodeInfo = await this.currentRPC.net.getNodeInfo();
+        const requestEndTime = new Date().getTime() * 1e6;
 
-        this.serverTimeDiff = nodeInfo.server_time - clientTime;
-        console.log(this.serverTimeDiff);
+        if (requestEndTime - requestStartTime < 30 * 1e9) {
+            this.serverTimeDiff = nodeInfo.server_time - requestStartTime;
+        }
     };
 
     /**
