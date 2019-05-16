@@ -17,15 +17,15 @@
 
 	iost.setAccount(account);
 
-	const tx = iost.callABI("token.iost", "transfer", ["iost", "secrypto", "testnetiost", "0.14", ""]);
+	const tx = iost.callABI("token.iost", "transfer", ["iost", "secrypto", "testnetiost", "0.0014", ""]);
 	tx.addApprove('iost', 0.14);
 
 	iost.signAndSend(tx)
 		.on('pending', (response) => {
-			console.log(response)
+			console.log("pending: ", response)
 		})
 		.on('success', (response) => {
-			console.log(response)
+			console.log("success: ", response)
 		})
 		.on('failed', (response) => {
 			console.log(response)
