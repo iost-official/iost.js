@@ -94,7 +94,7 @@ class IOST {
      * @constructor
      */
     signAndSend(tx) {
-        t.setTime(this.config.expiration, this.config.delay, this.serverTimeDiff);
+        tx.setTime(this.config.expiration, this.config.delay, this.serverTimeDiff);
         let cb = new Callback(this.currentRPC.transaction);
         let hash = "";
         let self = this;
