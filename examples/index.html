@@ -31,7 +31,7 @@
 
         transfer = function() {
           const tx = iost.callABI("token.iost", "transfer", ["iost", account, '888888', "88", "dapp test memo"]);
-          tx.addApprove("iost", 0.1123);
+          tx.addApprove("iost", "88");
 
           console.log(tx.getApproveList());
           iost.signAndSend(tx)
