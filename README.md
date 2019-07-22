@@ -11,7 +11,7 @@ npm install iost
 
 ## CDN
 ```
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/iost@0.1.1/iost.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/iost@0.1.18/dist/iost.min.js"></script>
 ```
 exports to window.IOST global.
 
