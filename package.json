@@ -2,7 +2,7 @@
   "name": "iost",
   "version": "0.1.18",
   "description": "iost JavaScript SDK",
-  "main": "dist/iost.min.js",
+  "main": "dist/iost.node.js",
   "author": "IOST.IO",
   "scripts": {
     "dist": "webpack"
@@ -21,6 +21,7 @@
     "tweetnacl": "^1.0.0"
   },
   "devDependencies": {
+    "@babel/cli": "^7.5.5",
     "@babel/core": "^7.5.5",
     "@babel/plugin-transform-async-to-generator": "^7.5.0",
     "@babel/plugin-transform-runtime": "^7.5.5",
@@ -28,6 +29,7 @@
     "@babel/runtime": "^7.5.5",
     "babel-loader": "^8.0.6",
     "browserify": "^16.2.3",
+    "core-js": "3",
     "webpack": "^4.30.0",
     "webpack-cli": "^3.3.0"
   }
