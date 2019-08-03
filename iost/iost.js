@@ -20,14 +20,15 @@ const defaultConfig = {
  */
 class IOST {
     constructor(config) {
+        this.rpc = undefined;
+        this.account = undefined;
+        this.serverTimeDiff = 0;
+
         this.config = defaultConfig;
         if (!config) {
             return
         }
         Object.assign(this.config, config);
-        this.rpc = undefined;
-        this.account = undefined;
-        this.serverTimeDiff = 0;
     }
 
     /**
