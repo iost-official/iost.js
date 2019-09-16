@@ -56,7 +56,7 @@ class IOST {
      */
     transfer(token, from, to, amount, memo = "") {
         let t = this.callABI("token.iost", "transfer", [token, from, to, amount, memo]);
-        t.addApprove("iost", amount);
+        t.addApprove(token, amount);
         return t;
     }
 
