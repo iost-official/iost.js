@@ -17,7 +17,7 @@ class Account {
         return this._id;
     }
     getKeyPair(permission) {
-        return this._kp[permission]
+        return this._key_pair[permission]
     }
     static import(json) {
         const obj = JSON.parse(json)  // TODO
