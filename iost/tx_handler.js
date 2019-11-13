@@ -96,9 +96,9 @@ class TxHandler {
             if (self.status === "idle") {
                 return
             }
-            if (self.status === "success" || self.status === "failed" || i > parseInt(times)) {
+            if (self.status === "success" || self.status === "failed" || i > Math.trunc(times)) {
                 clearInterval(id);
-                if (self.status !== "success" && self.status !== "failed" && i > parseInt(times)) {
+                if (self.status !== "success" && self.status !== "failed" && i > Math.trunc(times)) {
                     self.Failed("Error: tx " + self._hash + " on chain timeout.");
                 }
                 return
@@ -112,7 +112,7 @@ class TxHandler {
                 }
             }).catch(function (e) {
             })
-        }, parseInt(interval));
+        }, Math.trunc(interval));
     }
 
     static SimpleTx(contract, abi, args, config) {
