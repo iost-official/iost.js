@@ -1,18 +1,22 @@
-class Callback {
-    constructor(transaction) {
+import Transaction from '../lib/transaction';
+
+export default class Callback {
+    public transaction: Transaction
+    public map: { [key: string]: Function } = {}
+    public status = ''
+    public hash = ''
+
+    constructor(transaction: Transaction) {
         this.transaction = transaction;
-        this.map = {};
-        this.status = "";
-        this.hash = ""
     }
 
-    on(msg, f) {
+    on(msg: string, f: Function) {
         this.map[msg] = f;
         if (msg === "success") this._start();
         return this;
     }
 
-    pushMsg(msg, args) {
+    pushMsg(msg: string, args: any) {
         const f = this.map[msg];
         if (f === undefined) {
             return
@@ -49,5 +53,3 @@ class Callback {
     }
 
 }
-
-module.exports = Callback;

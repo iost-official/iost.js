@@ -1,10 +1,19 @@
-const RPC = require('../lib/rpc');
-const {Tx} = require('../lib/structs');
-const TxHandler = require('./tx_handler');
-const Callback = require('./callback');
-const Base58 = require('bs58');
+import RPC from '../lib/rpc';
+import { Tx } from '../lib/structs';
+import TxHandler from './tx_handler';
+import Callback from './callback';
+import Base58 from 'bs58';
+import Account from './account';
 
-const defaultConfig = {
+export interface IOSTConfig {
+    gasRatio: number,
+    gasLimit: number,
+    delay: number,
+    expiration: number,
+    defaultLimit: number | string
+}
+
+const defaultConfig: IOSTConfig = {
     gasRatio: 1,
     gasLimit: 2000000,
     delay: 0,
@@ -18,12 +27,15 @@ const defaultConfig = {
  * @param {object}config - 这个iost的配置
  * @param {HTTPProvider} - provider
  */
-class IOST {
-    constructor(config) {
-        this.rpc = undefined;
-        this.account = undefined;
-        this.serverTimeDiff = 0;
+export default class IOST {
+    private rpc?: RPC
+    private account?: Account
+    private serverTimeDiff = 0
+    private config: IOSTConfig
+    private currentRPC?: RPC
+    private currentAccount?: Account
 
+    constructor(config?: IOSTConfig) {
         this.config = defaultConfig;
         if (!config) {
             return
@@ -38,7 +50,7 @@ class IOST {
      * @param {Array}args - 智能合约参数数组
      * @returns {Tx}
      */
-    callABI(contract, abi, args) {
+    callABI(contract: string, abi: string, args: string[]) {
         const t = new Tx(this.config.gasRatio, this.config.gasLimit);
         t.addAction(contract, abi, JSON.stringify(args));
         t.setTime(this.config.expiration, this.config.delay, this.serverTimeDiff);
@@ -54,7 +66,7 @@ class IOST {
      * @param {string}memo - 转账备注
      * @returns {Tx}
      */
-    transfer(token, from, to, amount, memo = "") {
+    transfer(token: string, from: string, to: string, amount: string, memo = "") {
         let t = this.callABI("token.iost", "transfer", [token, from, to, amount, memo]);
         t.addApprove(token, amount);
         return t;
@@ -70,7 +82,7 @@ class IOST {
      * @param {number}initialGasPledge - 用户初始IOST质押
      * @returns {Tx}
      */
-    newAccount(name, creator, ownerkey, activekey, initialRAM, initialGasPledge) {
+    newAccount(name: string, creator: string, ownerkey: string, activekey: string, initialRAM: number, initialGasPledge: number) {
         if (!this._checkPublicKey(ownerkey) || !this._checkPublicKey(activekey))
             throw "error public key";
 
@@ -79,14 +91,14 @@ class IOST {
         if (initialRAM > 10) {
             t.addAction("ram.iost", "buy", JSON.stringify([creator, name, initialRAM]));
         }
-        if (initialGasPledge > 0){
-            t.addAction("gas.iost", "pledge", JSON.stringify([creator, name, initialGasPledge+""]));
+        if (initialGasPledge > 0) {
+            t.addAction("gas.iost", "pledge", JSON.stringify([creator, name, initialGasPledge + ""]));
         }
         t.setTime(this.config.expiration, this.config.delay, this.serverTimeDiff);
         return t
     }
 
-    _checkPublicKey(key) {
+    _checkPublicKey(key: string) {
         let b = Base58.decode(key);
         return b.length === 32;
     }
@@ -96,16 +108,16 @@ class IOST {
      * @param tx
      * @constructor
      */
-    signAndSend(tx) {
+    signAndSend(tx: Tx) {
         tx.setTime(this.config.expiration, this.config.delay, this.serverTimeDiff);
-        let cb = new Callback(this.currentRPC.transaction);
+        let cb = new Callback((this.currentRPC as RPC).transaction);
         let hash = "";
         let self = this;
 
-        self.currentAccount.signTx(tx);
+        (self.currentAccount as Account).signTx(tx);
         setTimeout(function () {
-            self.currentRPC.transaction.sendTx(tx)
-                .then(function(data){
+            (self.currentRPC as RPC).transaction.sendTx(tx)
+                .then(function (data) {
                     hash = data.hash;
                     cb.pushMsg("pending", hash);
                     cb.hash = hash
@@ -121,14 +133,14 @@ class IOST {
     /**
      * 钱包预留接口，可以获得来自钱包的账户
      */
-    currentAccount() {
+    getCurrentAccount() {
         return this.currentAccount;
     }
 
     /**
      * 钱包预留接口，可以获得来自钱包的provider
      */
-    currentRPC() {
+    getCurrentRPC() {
         return this.currentRPC;
     }
 
@@ -136,9 +148,9 @@ class IOST {
      * set a RPC to this iost
      * @param {RPC}rpc - rpc created by hand
      */
-    async setRPC(rpc) {
+    async setRPC(rpc: RPC) {
         this.currentRPC = rpc;
-        
+
         const requestStartTime = new Date().getTime() * 1e6;
         const nodeInfo = await this.currentRPC.net.getNodeInfo();
         const requestEndTime = new Date().getTime() * 1e6;
@@ -153,10 +165,8 @@ class IOST {
      * @param {Account}account - rpc created by hand
      *
      */
-    setAccount(account) {
+    setAccount(account: Account) {
         this.currentAccount = account;
     }
 
 }
-
-module.exports = IOST;

@@ -1,4 +1,5 @@
-const axios = require('axios');
+import axios, { AxiosRequestConfig } from 'axios';
+import Provider from './Provider';
 
 /**
  * http接口访问区块链节点
@@ -6,8 +7,11 @@ const axios = require('axios');
  * @param {string} host - IOST节点的URL
  * @param {number} timeout - 超时时间，以毫秒计时
  */
-class HTTPProvider {
-    constructor(host, timeout) {
+export default class HTTPProvider implements Provider {
+    private _host: string
+    private _timeout: number
+
+    constructor(host: string, timeout: number) {
         this._host = host || 'http://localhost:30000';
         this._timeout = timeout;
     }
@@ -19,8 +23,7 @@ class HTTPProvider {
      * @param {string}data - 参数，以json string表示
      * @returns {promise} - 返回response的内容的promise
      */
-    send(method, url, data) {
-
+    public send(method: string, url: string, data: string) {
         const config = {
             method: method,
             url: this._host + '/' + url,
@@ -29,7 +32,7 @@ class HTTPProvider {
             headers: {
                 'Content-Type': 'text/plain'
             }
-        };
+        } as AxiosRequestConfig;
         return axios(config).then(function (response) {
             return response.data;
         }).catch((e) => {
@@ -42,5 +45,3 @@ class HTTPProvider {
 
     }
 }
-
-module.exports = HTTPProvider;

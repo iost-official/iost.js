@@ -1,18 +1,29 @@
-const {Tx} = require('../lib/structs');
+import { Tx } from '../lib/structs';
+import RPC from '../lib/rpc';
+import { IOSTConfig } from './iost';
 
-class TxHandler {
-    constructor(tx, rpc) {
+export default class TxHandler {
+    public tx: Tx
+    public _rpc: RPC
+    public _hash: string
+    public status: string
+
+    public Pending: Function
+    public Success: Function
+    public Failed: Function
+
+    constructor(tx: Tx, rpc: RPC) {
         this.tx = tx;
         let self = this;
-        this.Pending = function (response) {
+        this.Pending = function (response: any) {
             console.log("Pending... tx: " + response.hash + ", " + JSON.stringify(self.tx.actions));
             self.status = "pending";
         };
-        this.Success = function (response) {
+        this.Success = function (response: any) {
             console.log("Success... tx, receipt: " + JSON.stringify(response));
             self.status = "success";
         };
-        this.Failed = function (res) {
+        this.Failed = function (res: any) {
             console.log("Error... tx failed, res: " + JSON.stringify(res) + ", tx: " + JSON.stringify(self.tx));
             self.status = "failed";
         };
@@ -21,14 +32,14 @@ class TxHandler {
         this.status = "idle"
     }
 
-    onPending(c) {
+    onPending(c: Function) {
         let self = this;
-        this.Pending = function (res) {
+        this.Pending = function (res: any) {
             self.status = "pending";
             try {
                 let p = c(res);
                 if (typeof p === "object" && typeof p.catch === 'function') {
-                    p.catch(e => console.error("on pending failed. ", e));
+                    p.catch((e: Error) => console.error("on pending failed. ", e));
                 }
             } catch (e) {
                 console.error("on pending failed. ", e);
@@ -37,14 +48,14 @@ class TxHandler {
         return this
     }
 
-    onSuccess(c) {
+    onSuccess(c: Function) {
         let self = this;
-        this.Success = function (res) {
+        this.Success = function (res: any) {
             self.status = "success";
             try {
                 let p = c(res);
                 if (typeof p === "object" && typeof p.catch === 'function') {
-                    p.catch(e => console.error("on success failed. ", e));
+                    p.catch((e: Error) => console.error("on success failed. ", e));
                 }
             } catch (e) {
                 console.error("on success failed. ", e);
@@ -54,14 +65,14 @@ class TxHandler {
 
     }
 
-    onFailed(c) {
+    onFailed(c: Function) {
         let self = this;
-        this.Failed = function (res) {
+        this.Failed = function (res: any) {
             self.status = "failed";
             try {
                 let p = c(res);
                 if (typeof p === "object" && typeof p.catch === 'function') {
-                    p.catch(e => console.log("on failed failed. ", e));
+                    p.catch((e: Function) => console.log("on failed failed. ", e));
                 }
             } catch (e) {
                 console.log("on failed failed. ", e);
@@ -82,7 +93,7 @@ class TxHandler {
         return self
     }
 
-    listen(interval, times) {
+    listen(interval: number, times: number) {
         if (!interval || !times) {
             interval = 1000;
             times = 90
@@ -96,9 +107,9 @@ class TxHandler {
             if (self.status === "idle") {
                 return
             }
-            if (self.status === "success" || self.status === "failed" || i > parseInt(times)) {
+            if (self.status === "success" || self.status === "failed" || i > times) {
                 clearInterval(id);
-                if (self.status !== "success" && self.status !== "failed" && i > parseInt(times)) {
+                if (self.status !== "success" && self.status !== "failed" && i > times) {
                     self.Failed("Error: tx " + self._hash + " on chain timeout.");
                 }
                 return
@@ -112,14 +123,12 @@ class TxHandler {
                 }
             }).catch(function (e) {
             })
-        }, parseInt(interval));
+        }, interval);
     }
 
-    static SimpleTx(contract, abi, args, config) {
-        const t = new Tx(config.gasRatio, config.gasLimit, config.delay);
+    static SimpleTx(contract: string, abi: string, args: string, config: IOSTConfig) {
+        const t = new Tx(config.gasRatio, config.gasLimit);
         t.addAction(contract, abi, JSON.stringify(args));
         return t
     }
 }
-
-module.exports = TxHandler;

@@ -1,28 +1,31 @@
-const Long = require('long');
-const { SHA3 } = require('sha3');
+import Long from 'long';
+import { SHA3 } from 'sha3';
 
+export default class Codec {
+    // FIXME: This member is referenced from Signature._bytes()
+    //        But, should be private and has a getter if needed
+    public _buf: Buffer
 
-class Codec {
     constructor() {
         this._buf = Buffer.alloc(0);
     }
 
-    pushInt(len) {
+    pushInt(len: number) {
         let bb = Buffer.alloc(4);
         bb.writeInt32BE(len, 0);
         this._buf = Buffer.concat([this._buf, bb]);
         return this
     }
 
-    pushByte(n) {
+    pushByte(n: number) {
         let bb = Buffer.alloc(1);
         bb.writeUInt8(n, 0);
         this._buf = Buffer.concat([this._buf, bb]);
         return this
     }
 
-    pushInt64(n) {
-        let l = Long.fromString(n+"");
+    pushInt64(n: number) {
+        let l = Long.fromString(n + "");
         let bb = Buffer.alloc(8);
         bb.writeInt32BE(l.high, 0);
         bb.writeInt32BE(l.low, 4);
@@ -30,7 +33,7 @@ class Codec {
         return this
     }
 
-    pushString(s) {
+    pushString(s: string) {
         const len = s.length;
         let bb = Buffer.from(s);
         this.pushInt(bb.length);
@@ -38,11 +41,9 @@ class Codec {
         return this
     }
 
-    pushBytes(b) {
+    pushBytes(b: Buffer) {
         this.pushInt(b.length);
         this._buf = Buffer.concat([this._buf, b]);
         return this
     }
 }
-
-module.exports = Codec;

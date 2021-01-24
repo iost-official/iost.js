@@ -1,10 +1,15 @@
+import Provider from "./provider/Provider";
+import RPC from './rpc';
+
 /**
  * 查询当前节点信息的接口
  * @constructor
  * @param {RPC}rpc - 通过rpc生成Net模块
  */
-class Net {
-    constructor(rpc) {
+export default class Net {
+    private _provider: Provider
+
+    constructor(rpc: RPC) {
         this._provider = rpc.getProvider();
     }
 
@@ -20,5 +25,3 @@ class Net {
         return this._provider.send('get', 'getNodeInfo');
     }
 }
-
-module.exports = Net;

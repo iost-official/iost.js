@@ -3,4 +3,4 @@ const Algorithm = {
     Secp256k1: 1,
 };
 
-module.exports = Algorithm;
+export default Algorithm;

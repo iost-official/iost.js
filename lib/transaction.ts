@@ -1,10 +1,18 @@
+import Provider from "./provider/Provider";
+import { Tx } from './structs';
+
 /**
  *
  * @constructor
  * @param {RPC}rpc - 通过rpc生成Transaction模块
  */
-class Transaction {
-    constructor(iost) {
+export default class Transaction {
+    private _provider: Provider
+
+    /* NOTE:
+     * Set any temporary. Fix it after ts rewriting IOST class
+     */
+    constructor(iost: any) {
         this._provider = iost.getProvider();
     }
 
@@ -13,7 +21,7 @@ class Transaction {
      * @param {Tx}tx
      * @returns {promise}
      */
-    sendTx(tx) {
+    sendTx(tx: Tx) {
         const api = 'sendTx';
         return this._provider.send('post', api, JSON.parse(JSON.stringify(tx)))
     }
@@ -23,7 +31,7 @@ class Transaction {
      * @param {string}hash - base58编码的hash
      * @returns {promise}
      */
-    getTxByHash(hash) {
+    getTxByHash(hash: string) {
         const api = 'getTxByHash/' + hash;
         return this._provider.send('get', api);
     }
@@ -33,7 +41,7 @@ class Transaction {
      * @param {string}hash - base58编码的hash
      * @returns {promise}
      */
-    getTxReceiptByHash(hash) {
+    getTxReceiptByHash(hash: string) {
         const api = 'getTxReceiptByHash/' + hash;
         return this._provider.send('get', api);
     }
@@ -43,11 +51,8 @@ class Transaction {
      * @param {string}txHash - base58编码的hash
      * @returns {promise}
      */
-    getTxReceiptByTxHash(txHash) {
+    getTxReceiptByTxHash(txHash: string) {
         const api = 'getTxReceiptByTxHash/' + txHash;
         return this._provider.send('get', api);
     }
-
 }
-
-module.exports = Transaction;

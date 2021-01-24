@@ -1,15 +1,21 @@
-const Net = require('./net');
-const Blockchain = require('./blockchain');
-const Transaction = require('./transaction');
-
+import Provider from './provider/Provider';
+import Net from './net';
+import Blockchain from './blockchain';
+import Transaction from './transaction';
 
 /**
  * RPC接口，用以发送交易和查询各类信息
  * @constructor
  * @param {HTTPProvider}provider - provider of this rpc
  */
-class RPC {
-    constructor(provider) {
+export default class RPC {
+    private _provider: Provider
+
+    public net: Net
+    public blockchain: Blockchain
+    public transaction: Transaction
+
+    constructor(provider: Provider) {
         this._provider = provider;
         this.net = new Net(this);
         this.blockchain = new Blockchain(this);
@@ -20,7 +26,7 @@ class RPC {
      * 设置Provider
      * @param {HTTPProvider}provider - provider of this rpc
      */
-    setProvider(provider) {
+    setProvider(provider: Provider) {
         this._provider = provider;
     }
 
@@ -32,5 +38,3 @@ class RPC {
         return this._provider;
     }
 }
-
-module.exports = RPC;

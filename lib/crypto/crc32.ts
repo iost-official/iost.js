@@ -1,7 +1,7 @@
 (function () {
 
 
-    var table = [],
+    var table: number[] = [],
         poly = 0xeb31d82e; // reverse polynomial
 
     // build the table
@@ -21,7 +21,7 @@
         }
     }
 
-    function strToArr(str) {
+    function strToArr(str: string) {
         // sweet hack to turn string into a 'byte' array
         return Array.prototype.map.call(str, function (c) {
             return c.charCodeAt(0);
@@ -33,7 +33,7 @@
      *
      * This is slower for repeated calls, so append mode is not supported.
      */
-    function crcDirect(arr) {
+    function crcDirect(arr: number[]) {
         var crc = -1, // initial contents of LFBSR
             i, j, l, temp;
 
@@ -55,18 +55,20 @@
         return crc ^ -1;
     }
 
+    var tableCrc: number | undefined = undefined
+
     /*
      * Compute CRC with the help of a pre-calculated table.
      *
      * This supports append mode, if the second parameter is set.
      */
-    function crcTable(arr, append) {
+    function crcTable(arr: number[], append?: boolean) {
         var crc, i, l;
 
         // if we're in append mode, don't reset crc
         // if arr is null or undefined, reset table and return
-        if (typeof crcTable.crc === 'undefined' || !append || !arr) {
-            crcTable.crc = 0 ^ -1;
+        if (typeof tableCrc === 'undefined' || !append || !arr) {
+            tableCrc = 0 ^ -1;
 
             if (!arr) {
                 return;
@@ -74,13 +76,13 @@
         }
 
         // store in temp variable for minor speed gain
-        crc = crcTable.crc;
+        crc = tableCrc;
 
         for (i = 0, l = arr.length; i < l; i += 1) {
             crc = (crc >>> 8) ^ table[(crc ^ arr[i]) & 0xff];
         }
 
-        crcTable.crc = crc;
+        tableCrc = crc;
 
         return crc ^ -1;
     }
@@ -89,12 +91,12 @@
     // this isn't that costly, and most uses will be for table assisted mode
     makeTable();
 
-    module.exports = function (val, direct) {
-        var val = (typeof val === 'string') ? strToArr(val) : val,
-            ret = direct ? crcDirect(val) : crcTable(val);
+    module.exports = function (val: string | number[], direct: boolean) {
+        var arr = (typeof val === 'string') ? strToArr(val) : val,
+            ret = direct ? crcDirect(val as number[]) : crcTable(arr as any);
 
         // convert to 2's complement hex
-        return (ret >>> 0).toString(16);
+        return ((ret as number) >>> 0).toString(16);
     };
     module.exports.direct = crcDirect;
     module.exports.table = crcTable;

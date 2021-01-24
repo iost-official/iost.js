@@ -1,10 +1,17 @@
+import Provider from './provider/Provider';
+
 /**
  * 区块链相关RPC接口的实现
  * @constructor
  * @param {RPC}rpc - 通过rpc生成Blockchain模块
  */
-class Blockchain {
-    constructor(iost) {
+export default class Blockchain {
+    private _provider: Provider
+
+    /* NOTE:
+     * Set any temporary. Fix it after ts rewriting IOST class
+     */
+    constructor(iost: any) {
         this._provider = iost.getProvider();
     }
 
@@ -22,7 +29,7 @@ class Blockchain {
      * @param {boolean}complete - 是否获取完整的block
      * @returns {promise}
      */
-    getBlockByHash(hash, complete) {
+    getBlockByHash(hash: string, complete: boolean) {
         const api = 'getBlockByHash/' + hash + '/' + complete;
         return this._provider.send('get', api);
     }
@@ -33,7 +40,7 @@ class Blockchain {
      * @param {boolean}complete - 是否获取完整的block
      * @returns {promise}
      */
-    getBlockByNum(num, complete) {
+    getBlockByNum(num: number, complete: boolean) {
         const api = 'getBlockByNumber/' + num + '/' + complete;
         return this._provider.send('get', api);
     }
@@ -44,8 +51,7 @@ class Blockchain {
      * @param useLongestChain
      * @returns {promise}
      */
-    getBalance(address, tokenSymbol = "iost", useLongestChain = 0)
-    {
+    getBalance(address: string, tokenSymbol = "iost", useLongestChain = 0) {
         const api = 'getTokenBalance/' + address + '/' + tokenSymbol + '/' + useLongestChain;
         return this._provider.send('get', api);
     }
@@ -57,8 +63,7 @@ class Blockchain {
      * @param useLongestChain
      * @returns {promise}
      */
-    getToken721Balance(address, tokenSymbol, useLongestChain = 0)
-    {
+    getToken721Balance(address: string, tokenSymbol: string, useLongestChain = 0) {
         const api = 'getToken721Balance/' + address + '/' + tokenSymbol + '/' + useLongestChain;
         return this._provider.send('get', api);
     }
@@ -70,8 +75,7 @@ class Blockchain {
      * @param useLongestChain
      * @returns {promise}
      */
-    getToken721Metadata(tokenSymbol, tokenID, useLongestChain = 0)
-    {
+    getToken721Metadata(tokenSymbol: string, tokenID: string, useLongestChain = 0) {
         const api = 'getToken721Metadata/' + tokenSymbol + '/' + tokenID + '/' + useLongestChain;
         return this._provider.send('get', api);
     }
@@ -82,8 +86,7 @@ class Blockchain {
      * @param useLongestChain
      * @returns {promise}
      */
-    getToken721Owner(tokenSymbol, tokenID, useLongestChain = 0)
-    {
+    getToken721Owner(tokenSymbol: string, tokenID: string, useLongestChain = 0) {
         const api = 'getToken721Owner/' + tokenSymbol + '/' + tokenID + '/' + useLongestChain;
         return this._provider.send('get', api);
     }
@@ -94,7 +97,7 @@ class Blockchain {
      * @param {boolean} useLongestChain - 是否从最长链上查询
      * @returns {promise}
      */
-    getContract(id, useLongestChain = 0) {
+    getContract(id: string, useLongestChain = 0) {
         const api = 'getContract/' + id + '/' + useLongestChain;
         return this._provider.send('get', api);
     }
@@ -107,12 +110,12 @@ class Blockchain {
      * @param {boolean}pending - 是否从最长链上查询
      * @returns {promise}
      */
-    getContractStorage(contractID, key, field="", pending=false) {
+    getContractStorage(contractID: string, key: string, field = "", pending = false) {
         if (typeof field === 'boolean') {
             pending = field;
             field = ""
         }
-      
+
         const query = {
             "id": contractID,
             "key": key,
@@ -131,7 +134,7 @@ class Blockchain {
      * @param {boolean}pending - 是否从最长链上查询
      * @returns {promise}
      */
-    getContractStorageFields(contractID, key, pending=false) {
+    getContractStorageFields(contractID: string, key: string, pending = false) {
         const query = {
             "id": contractID,
             "key": key,
@@ -148,8 +151,8 @@ class Blockchain {
      * @param {boolean}reversible - 是否从可逆链上查询
      * @returns {promise}
      */
-    getAccountInfo(id, reversible) {
-        const api = 'getAccount/' + id + '/' + (reversible? 1: 0);
+    getAccountInfo(id: string, reversible: boolean) {
+        const api = 'getAccount/' + id + '/' + (reversible ? 1 : 0);
         return this._provider.send('get', api);
     }
 
@@ -165,7 +168,7 @@ class Blockchain {
      * 获取预估的gas消耗
      * @returns {number}
      */
-    getGasUsage(actionName) {
+    getGasUsage(actionName: string) {
         switch (actionName) {
             case "transfer":
                 return 7800;
@@ -187,5 +190,3 @@ class Blockchain {
         }
     }
 }
-
-module.exports = Blockchain;
