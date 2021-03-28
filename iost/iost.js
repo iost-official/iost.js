@@ -55,6 +55,18 @@ class IOST {
      * @returns {Tx}
      */
     transfer(token, from, to, amount, memo = "") {
+        // For object-style input
+        if (arguments.length === 1 && typeof arguments[0] === 'object') {
+          const transferStructure = arguments[0]
+          return transfer(
+            transferStructure.token,
+            transferStructure.from,
+            transferStructure.to,
+            transferStructure.amount,
+            transferStructure.memo
+          )
+        }
+
         let t = this.callABI("token.iost", "transfer", [token, from, to, amount, memo]);
         t.addApprove(token, amount);
         return t;
